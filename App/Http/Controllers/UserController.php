@@ -4,6 +4,7 @@ namespace lumilock\lumilock\App\Http\Controllers;
 
 use Illuminate\Support\Facades\Auth;
 use  lumilock\lumilock\App\Models\User;
+use lumilock\lumilock\App\Http\Resources\UserResource;
 
 class UserController extends Controller
 {
@@ -24,7 +25,15 @@ class UserController extends Controller
      */
     public function profile()
     {
-        return response()->json(['user' => Auth::user(), 'client ip' => $_SERVER['REMOTE_ADDR'], 'host name' => gethostname(), 'browser' => $_SERVER['HTTP_USER_AGENT']], 200);
+        // , 'client ip' => $_SERVER['REMOTE_ADDR'], 'host name' => gethostname(), 'browser' => $_SERVER['HTTP_USER_AGENT']
+        return response()->json(
+            [
+                'data' => new UserResource(Auth::user()),
+                'status' => 'SUCCESS',
+                'message' => 'Data of the current user.'
+            ],
+            200
+        );
     }
 
     /**
@@ -34,7 +43,14 @@ class UserController extends Controller
      */
     public function allUsers()
     {
-        return response()->json(['users' =>  User::all()], 200);
+        return response()->json(
+            [
+                'data' =>  UserResource::collection(User::all()),
+                'status' => 'SUCCESS',
+                'message' => 'List of all users.'
+            ],
+            200
+        );
     }
 
     /**
@@ -47,10 +63,24 @@ class UserController extends Controller
         try {
             $user = User::findOrFail($id);
 
-            return response()->json(['user' => $user], 200);
+            return response()->json(
+                [
+                    'data' => new UserResource($user),
+                    'status' => 'SUCCESS',
+                    'message' => 'Data of the user ' . $id . '.'
+                ],
+                200
+            );
         } catch (\Exception $e) {
 
-            return response()->json(['message' => 'user not found!'], 404);
+            return response()->json(
+                [
+                    'data' => null,
+                    'status' => 'NOT_FOUND',
+                    'message' => 'user not found!'
+                ],
+                404
+            );
         }
     }
 }

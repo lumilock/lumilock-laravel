@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 
 //import auth facades
 use Illuminate\Support\Facades\Auth;
+use lumilock\lumilock\App\Http\Resources\UserResource;
 use lumilock\lumilock\App\Models\User;
 
 class AuthController extends Controller
@@ -37,10 +38,24 @@ class AuthController extends Controller
             $user->save();
 
             //return successful response
-            return response()->json(['user' => $user, 'message' => 'CREATED'], 201);
+            return response()->json(
+                [
+                    'data' => new UserResource($user),
+                    'status' => 'CREATED',
+                    'message' => 'New user has been created!'
+                ],
+                201
+            );
         } catch (\Exception $e) {
             //return error message
-            return response()->json(['message' => 'User Registration Failed!'], 409);
+            return response()->json(
+                [
+                    'data' => null,
+                    'status' => 'FAILED',
+                    'message' => 'User Registration Failed!'
+                ],
+                409
+            );
         }
     }
 
@@ -61,10 +76,23 @@ class AuthController extends Controller
         $credentials = $request->only(['email', 'password']);
 
         if (!$token = Auth::attempt($credentials)) {
-            return response()->json(['message' => 'Unauthorized'], 401);
+            return response()->json(
+                [
+                    'data' => null,
+                    'status' => 'UNAUTHORIZED',
+                    'message' => 'Unauthorized'
+                ],
+                401
+            );
         }
-
-        return $this->respondWithToken($token);
+        return response()->json(
+            [
+                'data' => $this->respondWithToken($token)->original,
+                'status' => 'SUCCESS',
+                'message' => 'All info for the connection.'
+            ],
+            201
+        );
     }
 
     /**
@@ -79,11 +107,22 @@ class AuthController extends Controller
         if ($auth) {
             // Pass true to force the token to be blacklisted "forever" 
             Auth::logout(true);
-            return response()->json(['message' => 'LOGOUT'], 201);
+            return response()->json(
+                [
+                    'data' => null,
+                    'status' => 'LOGOUT',
+                    'message' => 'You have been successfully disconnected, and the token has been blacklisted.'
+                ],
+                201);
         } else {
-            return response()->json(['message' => 'Unauthorized'], 401);
+            return response()->json(
+                [
+                    'data' => null,
+                    'status' => 'UNAUTHORIZED',
+                    'message' => 'Unauthorized'
+                ],
+                401);
         }
         $this->jwt->parseToken()->invalidate();
-
     }
 }

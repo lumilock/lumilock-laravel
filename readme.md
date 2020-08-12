@@ -3,7 +3,7 @@
 [![Latest Version on Packagist][ico-version]][link-packagist]
 [![Dev Version on Packagist][ico-version-dev]][link-packagist]
 
-## Pre-Installation
+## Installation
 Create a .env file, copy all contents in .env.example into the .env file and add your database configurations.
 
 In boostrap/app.php uncomment the facades and eloquent method.
@@ -70,7 +70,23 @@ $app->register(Tymon\JWTAuth\Providers\LumenServiceProvider::class);
 $app->register(lumilock\lumilock\Providers\LumilockServiceProvider::class);
 ```
 
+## Routes
+- Post `/api/register` : Create a new user.
+  - `Auth` : False
+  - `@params` [name/email/password/password_confirmation]
+- Post `/api/login` : Generate a new jwt.
+  - `Auth` : False
+  - `@params` [email/password]
+- Post `/api/logout` : Blackliste the current jwt.
+  - `Auth` : True
+- Get `/api/profile` : Get all data from the current user.
+  - `Auth` : True
+- Get `/api/users/` : Get all data from all users.
+  - `Auth` : True
+- Get `/api/users/{id}` : Get all data from a specific user.
+  - `Auth` : True
 
+- s
 ## Change log
 
 Please see the [changelog](changelog.md) for more information on what has changed recently.
@@ -78,7 +94,7 @@ Please see the [changelog](changelog.md) for more information on what has change
 
 ## Credits
 
-- [Thibaud PERRIN][link-author]
+- [lumilock (Thibaud PERRIN)][link-author]
 
 
 ## License
@@ -89,5 +105,5 @@ license. Please see the [license file](license.md) for more information.
 [ico-version-dev]: https://img.shields.io/packagist/vpre/perrinthibaud/laravlock.svg
 
 [link-packagist]: https://packagist.org/packages/perrinthibaud/laravlock
-[link-author]: https://github.com/perrinthibaud
+[link-author]: https://github.com/lumilock
 [link-contributors]: ../../contributors]
