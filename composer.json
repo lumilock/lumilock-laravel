@@ -1,0 +1,30 @@
+{
+    "name": "lumilock/lumilock",
+    "description": "A package to create an admin panel API.",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Perrin Thibaud",
+            "email": "thibaud.perrin@outlook.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "tymon/jwt-auth": "^1.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "lumilock\\lumilock\\": "/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "lumilock\\lumilock\\Providers\\LumilockServiceProvider"
+            ],
+            "aliases": {
+            }
+        }
+    }
+}
