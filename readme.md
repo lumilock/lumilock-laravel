@@ -3,7 +3,7 @@
 [![Latest Version on Packagist][ico-version]][link-packagist]
 [![Dev Version on Packagist][ico-version-dev]][link-packagist]
 
-## Installation
+## 📚 Installation
 Create a .env file, copy all contents in .env.example into the .env file and add your database configurations.
 
 In boostrap/app.php uncomment the facades and eloquent method.
@@ -70,7 +70,7 @@ $app->register(Tymon\JWTAuth\Providers\LumenServiceProvider::class);
 $app->register(lumilock\lumilock\Providers\LumilockServiceProvider::class);
 ```
 
-## Routes
+## ⛕ Routes
 - Post `/api/register` : Create a new user.
   - `Auth` : False
   - `@params` [name/email/password/password_confirmation]
@@ -86,17 +86,27 @@ $app->register(lumilock\lumilock\Providers\LumilockServiceProvider::class);
 - Get `/api/users/{id}` : Get all data from a specific user.
   - `Auth` : True
 
-## Change log
+## 🧪 Tests
+In order to test the package use this command line at the root of your lumen project : 
+```shell
+vendor/bin/phpunit <path/to/lumilock/test/dir>
+
+# or
+
+vendor/bin/phpunit .\vendor\lumilock\lumilock\tests\
+```
+
+## 📰 Change log
 
 Please see the [changelog](changelog.md) for more information on what has changed recently.
 
 
-## Credits
+## 👨‍👩‍👧‍👦 Credits
 
 - [lumilock (Thibaud PERRIN)][link-author]
 
 
-## License
+## 📝 License
 
 license. Please see the [license file](license.md) for more information.
 
