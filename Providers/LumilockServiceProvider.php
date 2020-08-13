@@ -4,6 +4,7 @@ namespace lumilock\lumilock\Providers;
 
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Database\Eloquent\Factory as EloquentFactory;
 
 class LumilockServiceProvider extends ServiceProvider
 {
@@ -45,6 +46,21 @@ class LumilockServiceProvider extends ServiceProvider
          // overwritting it if necessary
          copy($configPath, $baseConfigPath . '/auth.php');
       }
+
+      // Loading custom factories
+      $this->registerEloquentFactoriesFrom(__DIR__.'/../database/factories');
+
+   }
+
+   /**
+    * Register factories.
+    *
+    * @param  string  $path
+    * @return void
+    */
+   protected function registerEloquentFactoriesFrom($path)
+   {
+      $this->app->make(EloquentFactory::class)->load($path);
    }
 
    /**
