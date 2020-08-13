@@ -22,15 +22,18 @@ class AuthController extends Controller
     {
         //validate incoming request 
         $this->validate($request, [
-            'name' => 'required|string',
-            'email' => 'required|email|unique:users',
-            'password' => 'required|confirmed',
+            'first_name' => 'required|regex:/^[A-Za-zÀ-ÿ\s-]+$/|max:50',
+            'last_name' => 'required|regex:/^[A-Za-zÀ-ÿ\s-]+$/|max:50',
+            'email' => 'nullable|string|email|max:191|unique:users',
+            'password' => 'required|string|min:6|confirmed',
         ]);
 
         try {
 
             $user = new User();
-            $user->name = $request->input('name');
+            $user->login = $request->input('first_name') . "\$split\$" . $request->input('last_name');
+            $user->first_name = $request->input('first_name');
+            $user->last_name = $request->input('last_name');
             $user->email = $request->input('email');
             $plainPassword = $request->input('password');
             $user->password = app('hash')->make($plainPassword);
@@ -60,6 +63,19 @@ class AuthController extends Controller
     }
 
     /**
+     * Get the login username to be used by the controller.
+     *
+     * @return string
+     */
+    public function username()
+    {
+        $identity  = request()->get('identity');
+        $fieldName = filter_var($identity, FILTER_VALIDATE_EMAIL) ? 'email' : 'login';
+        request()->merge([$fieldName => $identity]);
+        return $fieldName;
+    }
+
+    /**
      * Get a JWT via given credentials.
      *
      * @param  Request  $request
@@ -69,11 +85,13 @@ class AuthController extends Controller
     {
         //validate incoming request 
         $this->validate($request, [
-            'email' => 'required|string',
+            'identity' => 'required|string',
             'password' => 'required|string',
         ]);
 
-        $credentials = $request->only(['email', 'password']);
+        // $credentials = $request->only(['email', 'password']);
+
+        $credentials =  array_merge($request->only($this->username(), 'password'), ['active' => true]);
 
         if (!$token = Auth::attempt($credentials)) {
             return response()->json(
@@ -113,7 +131,8 @@ class AuthController extends Controller
                     'status' => 'LOGOUT',
                     'message' => 'You have been successfully disconnected, and the token has been blacklisted.'
                 ],
-                201);
+                201
+            );
         } else {
             return response()->json(
                 [
@@ -121,7 +140,8 @@ class AuthController extends Controller
                     'status' => 'UNAUTHORIZED',
                     'message' => 'Unauthorized'
                 ],
-                401);
+                401
+            );
         }
         $this->jwt->parseToken()->invalidate();
     }

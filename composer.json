@@ -24,6 +24,7 @@
                 "lumilock\\lumilock\\Providers\\LumilockServiceProvider"
             ],
             "aliases": {
+                "lumilock": "lumilock\\lumilock\\Facades\\lumilock"
             }
         }
     }

@@ -1,4 +1,4 @@
-# laravlock
+# Lumilock
 
 [![Latest Version on Packagist][ico-version]][link-packagist]
 [![Dev Version on Packagist][ico-version-dev]][link-packagist]
@@ -86,7 +86,6 @@ $app->register(lumilock\lumilock\Providers\LumilockServiceProvider::class);
 - Get `/api/users/{id}` : Get all data from a specific user.
   - `Auth` : True
 
-- s
 ## Change log
 
 Please see the [changelog](changelog.md) for more information on what has changed recently.
