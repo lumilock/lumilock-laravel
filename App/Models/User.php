@@ -57,7 +57,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         'password', 'remember_token'
     ];
 
-    
+
     /**
      * Get the first_name of the user and format it.
      *
@@ -86,9 +86,9 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         // 2- split by '.'
         $loginPoint = explode(".", $value);
 
-        if(count($loginPoint) == 2 && count($loginSplit) == 1) { // check if it's split by '.' and not by '$split$'
+        if (count($loginPoint) == 2 && count($loginSplit) == 1) { // check if it's split by '.' and not by '$split$'
             $logins = $loginPoint;
-        }else if (count($loginSplit) == 2) { // else check if it's split by '$split$'
+        } else if (count($loginSplit) == 2) { // else check if it's split by '$split$'
             $logins = $loginSplit;
         } else {
             throw new Exception("login format is wrong, you have more then one spliter : " . $value);
@@ -97,18 +97,18 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         $leftLogin = lumilock::clean($logins[0]);
         $rightLogin = lumilock::clean($logins[1]);
         // concat and separate by '.'
-        $login = $leftLogin.".".$rightLogin;
+        $login = $leftLogin . "." . $rightLogin;
         // count all users with same login
         $count = User::where('login', $login)->count();
         $nbr = 1;
         // check if login already exist
-        if($count != 0){
-            while($count != 0){ // while a similare login exist try a new login
+        if ($count != 0) {
+            while ($count != 0) { // while a similare login exist try a new login
                 $nbr++; // inscrement the number to concat with login
-                $count = User::where('login', $login.$nbr)->count(); // check with the new number
+                $count = User::where('login', $login . $nbr)->count(); // check with the new number
             }
-            $this->attributes['login'] = $login.$nbr; // save login
-        }else{
+            $this->attributes['login'] = $login . $nbr; // save login
+        } else {
             $this->attributes['login'] = $login; // save login
         }
     }

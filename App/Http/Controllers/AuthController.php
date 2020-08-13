@@ -89,8 +89,6 @@ class AuthController extends Controller
             'password' => 'required|string',
         ]);
 
-        // $credentials = $request->only(['email', 'password']);
-
         $credentials =  array_merge($request->only($this->username(), 'password'), ['active' => true]);
 
         if (!$token = Auth::attempt($credentials)) {
