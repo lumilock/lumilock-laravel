@@ -95,6 +95,8 @@ vendor/bin/phpunit <path/to/lumilock/test/dir>
 
 vendor/bin/phpunit .\vendor\lumilock\lumilock\tests\
 ```
+## 🏗️ Create a package
+https://blog.cloudoki.com/creating-a-lumen-package/
 
 ## 📰 Change log
 
