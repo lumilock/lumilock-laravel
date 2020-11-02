@@ -70,6 +70,13 @@ $app->register(Tymon\JWTAuth\Providers\LumenServiceProvider::class);
 $app->register(lumilock\lumilock\Providers\LumilockServiceProvider::class);
 ```
 
+Add CORS Middleware to `bootstrap/app.php`.
+```php
+  $app->middleware([
+      \lumilock\lumilock\App\Http\Middleware\CorsMiddleware::class
+  ]);
+```
+
 ## ⛕ Routes
 - Post `/api/register` : Create a new user.
   - `Auth` : False

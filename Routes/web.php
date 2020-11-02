@@ -35,6 +35,9 @@ $this->app->router->group(
         // Matches "/api/users
         $router->get('users', 'UserController@allUsers');
 
+        // Matches "/api/install
+        $router->get('install', 'InstallController@installTest');
+
 
         $router->get('/test', function () {
             return 'Hello Worlds';
