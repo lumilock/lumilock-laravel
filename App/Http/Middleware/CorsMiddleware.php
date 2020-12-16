@@ -20,7 +20,7 @@ class CorsMiddleware
     {
         $headers = [
             'Access-Control-Allow-Origin'      => '*',
-            'Access-Control-Allow-Methods'     => 'POST, GET, OPTIONS, PUT, DELETE',
+            'Access-Control-Allow-Methods'     => 'POST, GET, OPTIONS, PUT, DELETE', 'PATCH',
             'Access-Control-Allow-Credentials' => 'true',
             'Access-Control-Max-Age'           => '86400',
             'Access-Control-Allow-Headers'     => 'Content-Type, Authorization, X-Requested-With'
@@ -29,6 +29,11 @@ class CorsMiddleware
         if ($request->isMethod('OPTIONS'))
         {
             return response()->json('{"method":"OPTIONS"}', 200, $headers);
+        }
+
+        if (in_array($request->method(), ['POST', 'PUT', 'PATCH']) && $request->isJson()) {
+            $data = $request->json()->all();
+            $request->request->replace(is_array($data) ? $data : []);
         }
 
         $response = $next($request);

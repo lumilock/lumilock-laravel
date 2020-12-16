@@ -9,9 +9,21 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use lumilock\lumilock\App\Http\Resources\UserResource;
 use lumilock\lumilock\App\Models\User;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class AuthController extends Controller
 {
+
+    /**
+     * Instantiate a new UserController instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->middleware('auth', ['only' => ['check']]);
+    }
+
     /**
      * Store a new user.
      *
@@ -89,7 +101,7 @@ class AuthController extends Controller
             'password' => 'required|string',
         ]);
 
-        $credentials =  array_merge($request->only($this->username(), 'password'), ['active' => true]);
+        $credentials = array_merge($request->only($this->username(), 'password'), ['active' => true]);
 
         if (!$token = Auth::attempt($credentials)) {
             return response()->json(
@@ -101,9 +113,11 @@ class AuthController extends Controller
                 401
             );
         }
+        $user = Auth::user();
+        $token_info = $this->respondWithToken($token)->original;
         return response()->json(
             [
-                'data' => $this->respondWithToken($token)->original,
+                'data' => compact('token_info', 'user'),
                 'status' => 'SUCCESS',
                 'message' => 'All info for the connection.'
             ],
@@ -142,5 +156,32 @@ class AuthController extends Controller
             );
         }
         $this->jwt->parseToken()->invalidate();
+    }
+
+
+    /**
+     * Get authenticated user
+     */
+    public function check(Request $request)
+    {
+        // get the value of the token
+        $token_value = JWTAuth::getToken()->get();
+        // get the user like to the token (so auth user)
+        $user = new UserResource(JWTAuth::user());
+        // decode the token in order to get the expiration time
+        $decode_token = JWTAuth::getPayload($token_value)->toArray();
+
+        // create the response
+        $token_info = [
+            'token' => $token_value,
+            'expires_in' => $decode_token['exp'] - time(), // get in seconde time before expiration
+            'token_type' => "bearer"
+        ];
+
+        return response()->json([
+            'data' => compact('token_info', 'user'),
+            'status' => 'USER_VERIFIED',
+            'message' => 'Unauthorized'
+        ], 200);
     }
 }

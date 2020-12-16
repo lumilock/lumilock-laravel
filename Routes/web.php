@@ -16,28 +16,33 @@ $this->app->router->group(
         'namespace' => 'lumilock\lumilock\App\Http\Controllers'
     ],
     function ($router) {
-        // Matches "/api/register
-        $router->post('register', 'AuthController@register');
+        $router->group(['prefix' => 'auth'], function () use ($router) {
+            // Matches "/api/register
+            $router->post('register', 'AuthController@register');
 
-        // Matches "/api/login
-        $router->post('login', 'AuthController@login');
+            // Matches "/api/login
+            $router->post('login', 'AuthController@login');
 
-        // Matches "/api/logout
-        $router->post('logout', 'AuthController@logout');
+            // Matches "/api/logout
+            $router->post('logout', 'AuthController@logout');
 
-        // Matches "/api/profile
-        $router->get('profile', 'UserController@profile');
-    
-        // Matches "/api/users/1 
-        //get one user by id
-        $router->get('users/{id}', 'UserController@singleUser');
-    
-        // Matches "/api/users
-        $router->get('users', 'UserController@allUsers');
+            // Matches "/api/profile
+            $router->get('profile', 'UserController@profile');
+        
+            // Matches "/api/users/1 
+            //get one user by id
+            $router->get('users/{id}', 'UserController@singleUser');
 
-        // Matches "/api/install
-        $router->get('install', 'InstallController@installTest');
+            // Matches "/api/check 
+            //get user by token
+            $router->get('check', 'AuthController@check');
+        
+            // Matches "/api/users
+            $router->get('users', 'UserController@allUsers');
 
+            // Matches "/api/install
+            $router->get('install', 'InstallController@installTest');
+        });
 
         $router->get('/test', function () {
             return 'Hello Worlds';
