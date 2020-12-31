@@ -28,7 +28,7 @@ $this->app->router->group(
 
             // Matches "/api/profile
             $router->get('profile', 'UserController@profile');
-        
+
             // Matches "/api/users/1 
             //get one user by id
             $router->get('users/{id}', 'UserController@singleUser');
@@ -36,16 +36,21 @@ $this->app->router->group(
             // Matches "/api/check 
             //get user by token
             $router->get('check', 'AuthController@check');
-        
+
             // Matches "/api/users
             $router->get('users', 'UserController@allUsers');
 
             // Matches "/api/install
             $router->get('install', 'InstallController@installTest');
         });
-
-        $router->get('/test', function () {
-            return 'Hello Worlds';
-        });
+        $router->get('/{route:.*}/', 'GatewayController@routesGet');
+        $router->get('/test', 'GatewayController@routesGet');
+        $router->post('/test', 'GatewayController@routesPost');
+        // $app->get($uri, $callback);
+        // $app->post($uri, $callback);
+        // $app->put($uri, $callback);
+        // $app->patch($uri, $callback);
+        // $app->delete($uri, $callback);
+        // $app->options($uri, $callback);
     }
 );

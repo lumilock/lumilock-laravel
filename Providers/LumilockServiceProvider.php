@@ -34,6 +34,7 @@ class LumilockServiceProvider extends ServiceProvider
 
       $configPath = __DIR__ . '/../config/auth.php';
       $this->mergeConfigFrom($configPath, 'auth');
+
       //Register Our Package routes
       include __DIR__ . '/../Routes/web.php';
 
@@ -45,6 +46,15 @@ class LumilockServiceProvider extends ServiceProvider
          // Will copy package/auth.php to project/auth.php
          // overwritting it if necessary
          copy($configPath, $baseConfigPath . '/auth.php');
+      }
+      
+      $servicePath = __DIR__ . '/../config/services.php';
+      $this->mergeConfigFrom($servicePath, 'services');
+
+      if (!file_exists($baseConfigPath . '/services.php')) {
+         // Will copy package/auth.php to project/services.php
+         // overwritting it if necessary
+         copy($configPath, $baseConfigPath . '/services.php');
       }
 
       // Loading custom factories
