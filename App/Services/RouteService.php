@@ -22,10 +22,19 @@ class RouteService
 
     public function __construct()
     {
-        $this->baseUri = config('services.authors.base_uri');
-        $this->secret = config('services.authors.secret');
+        // $this->baseUri = config('services.authors.base_uri');
+        // $this->secret = config('services.authors.secret');
     }
 
+    public function setUri($uri)
+    {
+        $this->baseUri = $uri;
+    }
+
+    public function setSecret($secret)
+    {
+        $this->secret = $secret;
+    }
 
     /**
      * Obtain the full list of author from the author service

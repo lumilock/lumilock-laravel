@@ -9,31 +9,12 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use lumilock\lumilock\Facades\lumilock;
-use Ramsey\Uuid\Uuid;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
 class User extends Model implements AuthenticatableContract, AuthorizableContract, JWTSubject
 {
     use Authenticatable, Authorizable;
-
-    /**
-     * [$primaryKey description]
-     * @var string
-     */
-    protected $primaryKey = 'id';
-
-    protected $keyType = 'char';
-
-    public $incrementing = false;
-
-    protected static function boot()
-    {
-        parent::boot();
-
-        static::creating(function (Model $model) {
-            $model->setAttribute($model->getKeyName(), Uuid::uuid4());
-        });
-    }
+    use Traits\UsesUuid;
 
     /**
      * The attributes that are mass assignable.
