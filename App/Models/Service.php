@@ -21,4 +21,10 @@ class Service extends Model
         'picture_32',
         'picture_16'
     ];
+
+    // all permissions of the currante service
+    public function permissions ()
+    {
+        return $this->hasMany('lumilock\lumilock\App\Models\Permission', 'service_id');
+    }
 }

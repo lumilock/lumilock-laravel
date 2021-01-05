@@ -94,6 +94,20 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         }
     }
 
+    // all permissions for this user
+    public function permissions ()
+    {
+        return $this->belongsToMany(
+            'lumilock\lumilock\App\Models\Permission', // Modele cible que l'on souhaite récupérer
+            'rights', // Nom de la base pivot entre le modèle source et cible
+            'user_id', // id qui correspond au modèle source, dans le pivot
+            'permission_id' // id qui correspond au modèle cible, dans le pivot
+            )->using('lumilock\lumilock\App\Models\Right') // chemin du modèle pivot
+            ->withPivot([ // liste des élements se trouvant dans le modèle pivot autre que les ids
+                'is_active'
+            ]);
+    }
+
     /**
      * Get the identifier that will be stored in the subject claim of the JWT.
      *
