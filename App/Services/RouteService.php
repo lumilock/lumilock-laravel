@@ -39,9 +39,9 @@ class RouteService
     /**
      * Obtain the full list of author from the author service
      */
-    public function route($methode, $path, $data=[])
+    public function route($methode, $path, $data=[], $headers=[])
     {
-        return $this->performRequest($methode, $path, $data);
+        return $this->performRequest($methode, $path, $data, $headers);
     }
 
     // /**

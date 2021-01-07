@@ -164,24 +164,28 @@ class AuthController extends Controller
      */
     public function check(Request $request)
     {
-        // get the value of the token
-        $token_value = JWTAuth::getToken()->get();
-        // get the user like to the token (so auth user)
-        $user = new UserResource(JWTAuth::user());
-        // decode the token in order to get the expiration time
-        $decode_token = JWTAuth::getPayload($token_value)->toArray();
+        try {
+            // get the value of the token
+            $token_value = JWTAuth::getToken()->get();
+            // get the user like to the token (so auth user)
+            $user = new UserResource(JWTAuth::user());
+            // decode the token in order to get the expiration time
+            $decode_token = JWTAuth::getPayload($token_value)->toArray();
 
-        // create the response
-        $token_info = [
-            'token' => $token_value,
-            'expires_in' => $decode_token['exp'] - time(), // get in seconde time before expiration
-            'token_type' => "bearer"
-        ];
+            // create the response
+            $token_info = [
+                'token' => $token_value,
+                'expires_in' => $decode_token['exp'] - time(), // get in seconde time before expiration
+                'token_type' => "bearer"
+            ];
 
-        return response()->json([
-            'data' => compact('token_info', 'user'),
-            'status' => 'USER_VERIFIED',
-            'message' => 'Unauthorized'
-        ], 200);
+            return response()->json([
+                'data' => compact('token_info', 'user'),
+                'status' => 'USER_VERIFIED',
+                'message' => 'Unauthorized'
+            ], 200);
+        } catch (\Exception $e) {
+            dd($e);
+        }
     }
 }

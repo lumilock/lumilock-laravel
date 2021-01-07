@@ -39,7 +39,8 @@ class GatewayController extends Controller
                 $service = new ServiceUriResource(Service::where('path', '=', $path)->firstOrFail()); // we get uri and secret from database if exist
                 $this->routeService->setUri($service->uri);
                 $this->routeService->setSecret($service->secret);
-                return $this->successResponse($this->routeService->route($request->method(), $request->path()));
+                $headers['Authorization'] = $request->header('Authorization');
+                return $this->successResponse($this->routeService->route($request->method(), $request->path(), [], $headers));
             } catch (\Exception $e) {
                 return response()->json(
                     [
