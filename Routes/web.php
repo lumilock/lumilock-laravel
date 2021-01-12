@@ -42,15 +42,9 @@ $this->app->router->group(
 
             // Matches "/api/install
             $router->get('install', 'InstallController@installTest');
+
+            // Matches "/api/auth/services/
+            $router->post('services', 'ServiceController@singleService');
         });
-        $router->get('/{route:.*}/', 'GatewayController@routesGet');
-        // $router->get('/test', 'GatewayController@routesGet');
-        $router->post('/{route:.*}/', 'GatewayController@routesPost');
-        // $app->get($uri, $callback);
-        // $app->post($uri, $callback);
-        // $app->put($uri, $callback);
-        // $app->patch($uri, $callback);
-        // $app->delete($uri, $callback);
-        // $app->options($uri, $callback);
     }
 );
