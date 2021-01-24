@@ -70,11 +70,19 @@ $app->register(Tymon\JWTAuth\Providers\LumenServiceProvider::class);
 $app->register(lumilock\lumilock\Providers\LumilockServiceProvider::class);
 ```
 
-Add CORS Middleware to `bootstrap/app.php`.
+Add Authentiacate Middleware in order to protect your auth package and add CORS Middleware to `bootstrap/app.php`.
 ```php
+  $app->middleware([
+      \lumilock\lumilock\App\Http\Middleware\AuthenticateAccessMiddleware::class
+  ]);
   $app->middleware([
       \lumilock\lumilock\App\Http\Middleware\CorsMiddleware::class
   ]);
+```
+
+Finally add a secret key to the file `.env`  
+```.env
+ACCEPTED_SECRETS=<YourSecretKey>
 ```
 
 ## ⛕ Routes
