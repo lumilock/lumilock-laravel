@@ -81,10 +81,14 @@ class AuthController extends Controller
      */
     public function username()
     {
-        $identity  = request()->get('identity');
-        $fieldName = filter_var($identity, FILTER_VALIDATE_EMAIL) ? 'email' : 'login';
-        request()->merge([$fieldName => $identity]);
-        return $fieldName;
+        try {
+            $identity  = request()->get('identity');
+            $fieldName = filter_var($identity, FILTER_VALIDATE_EMAIL) ? 'email' : 'login';
+            request()->merge([$fieldName => $identity]);
+            return $fieldName;
+        } catch (\Exception $e) {
+            dd('username error :', $e);
+        }
     }
 
     /**
@@ -95,34 +99,39 @@ class AuthController extends Controller
      */
     public function login(Request $request)
     {
+
         //validate incoming request 
         $this->validate($request, [
             'identity' => 'required|string',
             'password' => 'required|string',
         ]);
 
-        $credentials = array_merge($request->only($this->username(), 'password'), ['active' => true]);
+        try {
+            $credentials = array_merge($request->only($this->username(), 'password'), ['active' => true]);
 
-        if (!$token = Auth::attempt($credentials)) {
+            if (!$token = Auth::attempt($credentials)) {
+                return response()->json(
+                    [
+                        'data' => null,
+                        'status' => 'UNAUTHORIZED',
+                        'message' => 'Unauthorized'
+                    ],
+                    401
+                );
+            }
+            $user = Auth::user();
+            $token_info = $this->respondWithToken($token)->original;
             return response()->json(
                 [
-                    'data' => null,
-                    'status' => 'UNAUTHORIZED',
-                    'message' => 'Unauthorized'
+                    'data' => compact('token_info', 'user'),
+                    'status' => 'SUCCESS',
+                    'message' => 'All info for the connection.'
                 ],
-                401
+                201
             );
+        } catch (\Exception $e) {
+            dd("Login error : ". $e);
         }
-        $user = Auth::user();
-        $token_info = $this->respondWithToken($token)->original;
-        return response()->json(
-            [
-                'data' => compact('token_info', 'user'),
-                'status' => 'SUCCESS',
-                'message' => 'All info for the connection.'
-            ],
-            201
-        );
     }
 
     /**

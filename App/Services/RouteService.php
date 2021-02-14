@@ -41,6 +41,7 @@ class RouteService
      */
     public function route($methode, $path, $data=[], $headers=[])
     {
+        dd('Auth perfom');
         return $this->performRequest($methode, $path, $data, $headers);
     }
 
