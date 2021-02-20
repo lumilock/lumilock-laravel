@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateRightsTable extends Migration
+class CreateAccessTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,23 +13,23 @@ class CreateRightsTable extends Migration
      */
     public function up()
     {
-        Schema::create('rights', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->uuid('user_id')->nullable(false);
+        Schema::create('access', function (Blueprint $table) {
+            $table->id();
             $table->uuid('permission_id')->nullable(false);
+            $table->uuid('api_key_id')->nullable(false);
 
             $table->boolean('is_active')->default(false);
             $table->timestamps();
 
-            $table->foreign('user_id')
-                ->references('id')
-                ->on('users')
-                ->onDelete('cascade')
-                ->onUpdate('cascade');
-
             $table->foreign('permission_id')
                 ->references('id')
                 ->on('permissions')
+                ->onDelete('cascade')
+                ->onUpdate('cascade');
+
+            $table->foreign('api_key_id')
+                ->references('id')
+                ->on('api_keys')
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
         });
@@ -42,10 +42,10 @@ class CreateRightsTable extends Migration
      */
     public function down()
     {
-        Schema::table('rights', function(Blueprint $table){
-            $table->dropForeign('rights_user_id_foreign');
-            $table->dropForeign('rights_permission_id_foreign');
+        Schema::table('access', function (Blueprint $table) {
+            $table->dropForeign('access_permission_id_foreign');
+            $table->dropForeign('access_api_key_id_foreign');
         });
-        Schema::dropIfExists('rights');
+        Schema::dropIfExists('access');
     }
 }

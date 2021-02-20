@@ -33,4 +33,18 @@ class Permission extends Model
                 'is_active'
             ]);
     }
+
+    // all Api keys
+    public function api_keys ()
+    {
+        return $this->belongsToMany(
+            'lumilock\lumilock\App\Models\Api_key', // Modele cible que l'on souhaite récupérer
+            'access', // Nom de la base pivot entre le modèle source et cible
+            'permission_id', // id qui correspond au modèle source, dans le pivot
+            'api_key_id' // id qui correspond au modèle cible, dans le pivot
+            )->using('lumilock\lumilock\App\Models\Access') // chemin du modèle pivot
+            ->withPivot([ // liste des élements se trouvant dans le modèle pivot autre que les ids
+                'is_active'
+            ]);
+    }
 }

@@ -108,6 +108,12 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
             ]);
     }
 
+    // all tokens of the currante user
+    public function tokens ()
+    {
+        return $this->hasMany('lumilock\lumilock\App\Models\Token', 'user_id');
+    }
+
     /**
      * Get the identifier that will be stored in the subject claim of the JWT.
      *

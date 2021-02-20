@@ -27,4 +27,10 @@ class Service extends Model
     {
         return $this->hasMany('lumilock\lumilock\App\Models\Permission', 'service_id');
     }
+
+    // all tokens of the currante service
+    public function tokens ()
+    {
+        return $this->hasMany('lumilock\lumilock\App\Models\Token', 'service_id');
+    }
 }

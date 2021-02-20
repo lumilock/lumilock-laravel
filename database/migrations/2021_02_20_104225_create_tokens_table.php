@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateRightsTable extends Migration
+class CreateTokensTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,23 +13,24 @@ class CreateRightsTable extends Migration
      */
     public function up()
     {
-        Schema::create('rights', function (Blueprint $table) {
+        Schema::create('tokens', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->uuid('user_id')->nullable(false);
-            $table->uuid('permission_id')->nullable(false);
+            $table->uuid('service_id')->nullable(false);
 
-            $table->boolean('is_active')->default(false);
+            $table->string('token',100)->nullable(false);
+            $table->date('expires_at')->nullable(false);
             $table->timestamps();
-
+            
             $table->foreign('user_id')
                 ->references('id')
                 ->on('users')
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
 
-            $table->foreign('permission_id')
+            $table->foreign('service_id')
                 ->references('id')
-                ->on('permissions')
+                ->on('services')
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
         });
@@ -42,10 +43,10 @@ class CreateRightsTable extends Migration
      */
     public function down()
     {
-        Schema::table('rights', function(Blueprint $table){
-            $table->dropForeign('rights_user_id_foreign');
-            $table->dropForeign('rights_permission_id_foreign');
+        Schema::table('tokens', function(Blueprint $table){
+            $table->dropForeign('tokens_user_id_foreign');
+            $table->dropForeign('tokens_service_id_foreign');
         });
-        Schema::dropIfExists('rights');
+        Schema::dropIfExists('tokens');
     }
 }
