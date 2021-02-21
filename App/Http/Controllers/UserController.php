@@ -244,4 +244,55 @@ class UserController extends Controller
             );
         }
     }
+
+    
+
+    /**
+     * Update info of an user.
+     * ! warning this function is only accessible by a super admin
+     *
+     * @return Response
+     */
+    public function updateUser(Request $request, $userId)
+    {
+        // we trim and remove null value from our inputs
+        $inputs = array_filter(array_map('trim', $request->all()), 'strlen');
+
+        // validate incoming request 
+        $this->validate($request->merge($inputs), [
+            'first_name' => 'required|regex:/^[A-Za-zÀ-ÿ\s-]+$/|max:50',
+            'last_name' => 'required|regex:/^[A-Za-zÀ-ÿ\s-]+$/|max:50',
+            'email' => 'nullable|string|email|max:191|unique:users',
+            'password' => 'string|min:6|regex:/[a-z]/|regex:/[A-Z]/|regex:/[0-9]/|regex:/[@$!%*#?&]/|regex:/^\S+$/|confirmed',
+        ]);
+
+        // get user we want update
+        $updateUser = User::find($userId);
+
+        // merge fillable and hidden value in an array and switch value to become keys [0 => password] -> [password => ""]
+        $columns = array_fill_keys(array_merge($updateUser->getFillable(), $updateUser->getHidden()), '');
+        // Columns that we can update (only fillable or hidden columns)
+        $filtredColumns = array_intersect_key($inputs, $columns);
+
+        // We check if there is old and new password
+        if (array_key_exists('password', $filtredColumns)) {
+            // Update the password
+            $updateUser->password = app('hash')->make($filtredColumns['password']);
+            $updateUser->save();
+        }
+
+        // we update profile data
+        $updateUser->fill($filtredColumns);
+        $updateUser->save();
+
+        // sending a response to the user
+        return response()->json(
+            [
+                'data' => $updateUser,
+                'status' => 'SUCCESS',
+                'message' => 'Data of the current user.'
+            ],
+            200
+        );
+    }
 }
