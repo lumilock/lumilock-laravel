@@ -11,16 +11,17 @@ class Token extends Model
 
     protected $fillable = [
         'user_id',
-        'service_id',
-        'token',
         'expires_at'
     ];
 
-    // Service link to this token
-    public function service ()
-    {
-        return $this->belongsTo('lumilock\lumilock\App\Models\service','service_id');
-    }
+    /**
+     * The attributes excluded from the model's JSON form.
+     *
+     * @var array
+     */
+    protected $hidden = [
+        'token'
+    ];
 
     // User link to this token
     public function user ()

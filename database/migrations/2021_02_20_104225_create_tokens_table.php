@@ -16,21 +16,14 @@ class CreateTokensTable extends Migration
         Schema::create('tokens', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->uuid('user_id')->nullable(false);
-            $table->uuid('service_id')->nullable(false);
 
-            $table->string('token',100)->nullable(false);
-            $table->date('expires_at')->nullable(false);
+            $table->longText('token')->nullable(false);
+            $table->dateTimeTz('expires_at', $precision = 0)->nullable(false);
             $table->timestamps();
             
             $table->foreign('user_id')
                 ->references('id')
                 ->on('users')
-                ->onDelete('cascade')
-                ->onUpdate('cascade');
-
-            $table->foreign('service_id')
-                ->references('id')
-                ->on('services')
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
         });
@@ -45,7 +38,6 @@ class CreateTokensTable extends Migration
     {
         Schema::table('tokens', function(Blueprint $table){
             $table->dropForeign('tokens_user_id_foreign');
-            $table->dropForeign('tokens_service_id_foreign');
         });
         Schema::dropIfExists('tokens');
     }

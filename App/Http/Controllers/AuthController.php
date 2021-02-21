@@ -2,12 +2,15 @@
 
 namespace lumilock\lumilock\App\Http\Controllers;
 
+use Carbon\Carbon;
+use DateInterval;
 use lumilock\lumilock\App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
 //import auth facades
 use Illuminate\Support\Facades\Auth;
 use lumilock\lumilock\App\Http\Resources\UserResource;
+use lumilock\lumilock\App\Models\Token;
 use lumilock\lumilock\App\Models\User;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
@@ -121,6 +124,23 @@ class AuthController extends Controller
             }
             $user = Auth::user();
             $token_info = $this->respondWithToken($token)->original;
+
+            // We calculate the token expiration date from the $token_info->expires_in value
+            $time = Carbon::now(); // Date time now
+            $time->add(new DateInterval('PT' . $token_info['expires_in'] . 'S')); // We add the duration that left to our token
+            $stamp = $time->format('Y-m-d H:i'); // Format conversion
+
+            // we remove all expires tokens
+            Token::where('expires_at', '<=', Carbon::now())->delete();
+
+            // we create a token in database
+            $tokeModel = new Token();
+            $tokeModel->user_id = $user->id;
+            $tokeModel->expires_at = $stamp;
+            $tokeModel->token = $token_info['token'];
+            $tokeModel->save();
+
+            // response to the user by giving him token_info and user data 
             return response()->json(
                 [
                     'data' => compact('token_info', 'user'),

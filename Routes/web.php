@@ -28,15 +28,9 @@ $this->app->router->group(
             // Profile
             $router->get('profile', 'UserController@profile');
             $router->put('profile', 'UserController@updateProfile');
-            $router->get('profile/tokens', function () {
-                return 'Not implemented : get /api/auth/profile/tokens = all tokens of the auth user.';
-            });
-            $router->delete('profile/tokens', function () {
-                return 'Not implemented : delete /api/auth/profile/tokens = remove all tokens of the auth user and logout.';
-            });
-            $router->delete('profile/tokens/{tokenId:[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}}', function () {
-                return 'Not implemented : delete /api/auth/profile/tokens/{tokenId} = remove specific token of the auth user and logout (but not current).';
-            });
+            $router->get('profile/tokens', 'UserController@profileTokens');
+            $router->delete('profile/tokens', 'UserController@profileDeleteTokens');
+            $router->delete('profile/tokens/{tokenId:[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}}', 'UserController@profileDeleteToken');
 
             // Users
             $router->get('users', 'UserController@allUsers');

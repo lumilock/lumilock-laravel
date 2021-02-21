@@ -4,8 +4,12 @@ namespace lumilock\lumilock\App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use lumilock\lumilock\App\Http\Resources\TokenResource;
 use  lumilock\lumilock\App\Models\User;
 use lumilock\lumilock\App\Http\Resources\UserResource;
+use lumilock\lumilock\App\Models\Token;
+use PhpParser\Node\Stmt\TryCatch;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class UserController extends Controller
 {
@@ -65,7 +69,7 @@ class UserController extends Controller
         $filtredColumns = array_intersect_key($inputs, $columns);
 
         // we check if there is old and new password
-        if (array_key_exists('password', $filtredColumns) && array_key_exists('new_password', $filtredColumns) ) {
+        if (array_key_exists('password', $filtredColumns) && array_key_exists('new_password', $filtredColumns)) {
             // We check that the old password is correct
             if (app('hash')->check($filtredColumns['password'], $updateProfile->password)) {
                 $updateProfile->password = app('hash')->make($filtredColumns['new_password']);
@@ -96,6 +100,101 @@ class UserController extends Controller
             ],
             200
         );
+    }
+
+    /**
+     * Get all tokens from the authenticated User.
+     *
+     * @return Response
+     */
+    public function profileTokens()
+    {
+        // , 'client ip' => $_SERVER['REMOTE_ADDR'], 'host name' => gethostname(), 'browser' => $_SERVER['HTTP_USER_AGENT']
+        return response()->json(
+            [
+                'data' => TokenResource::collection(Auth::user()->tokens),
+                'status' => 'SUCCESS',
+                'message' => 'Data of the current user.'
+            ],
+            200
+        );
+    }
+
+    /**
+     * Invalidate and remove all tokens from the authenticated User.
+     *
+     * @return Response
+     */
+    public function profileDeleteTokens()
+    {
+        try {
+            // we get all tokens of the current user
+            $tokens = Token::where('user_id', '=', Auth::id());
+            // invalidate all tokens
+            foreach ($tokens as $token_info) {
+                JWTAuth::manager()->invalidate(new \Tymon\JWTAuth\Token($token_info->token), $forceForever = false);
+            }
+            // clean token table in the database
+            $count = $tokens->delete();
+            return response()->json(
+                [
+                    'data' => $count,
+                    'status' => 'SUCCESS',
+                    'message' => 'All token have been removed.'
+                ],
+                200
+            );
+        } catch (\Exception $e) {
+
+            dd($e);
+            return response()->json(
+                [
+                    'data' => null,
+                    'status' => 'FAILED',
+                    'message' => 'An error occured when you tried to remove tokens from a user!'
+                ],
+                409
+            );
+        }
+        return response()->json(
+            [
+                'data' => TokenResource::collection(Auth::user()->tokens),
+                'status' => 'SUCCESS',
+                'message' => 'Data of the current user.'
+            ],
+            200
+        );
+    }
+
+    /**
+     * Delete one specific token from the current user.
+     *
+     */
+    public function profileDeleteToken($tokenId)
+    {
+        try {
+            // we select the token but verified that is a token of the current Auth
+            $count = Token::where('id', $tokenId)->where('id', $tokenId)->where('user_id', Auth::id())->firstOrFail()->delete();
+
+            return response()->json(
+                [
+                    'data' => $count,
+                    'status' => 'SUCCESS',
+                    'message' => 'The token ' . $tokenId . ' has been correctly removed.'
+                ],
+                200
+            );
+        } catch (\Exception $e) {
+
+            return response()->json(
+                [
+                    'data' => null,
+                    'status' => 'NOT_FOUND',
+                    'message' => 'Token not found!'
+                ],
+                404
+            );
+        }
     }
 
     /**
