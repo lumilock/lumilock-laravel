@@ -27,9 +27,7 @@ $this->app->router->group(
 
             // Profile
             $router->get('profile', 'UserController@profile');
-            $router->put('profile', function () {
-                return 'Not implemented : post /api/auth/profile, update the user profile.';
-            });
+            $router->put('profile', 'UserController@updateProfile');
             $router->get('profile/tokens', function () {
                 return 'Not implemented : get /api/auth/profile/tokens = all tokens of the auth user.';
             });

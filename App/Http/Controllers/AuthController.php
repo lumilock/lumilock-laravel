@@ -37,7 +37,7 @@ class AuthController extends Controller
             'first_name' => 'required|regex:/^[A-Za-zÀ-ÿ\s-]+$/|max:50',
             'last_name' => 'required|regex:/^[A-Za-zÀ-ÿ\s-]+$/|max:50',
             'email' => 'nullable|string|email|max:191|unique:users',
-            'password' => 'required|string|min:6|confirmed',
+            'password' => 'required|string|min:6|regex:/[a-z]/|regex:/[A-Z]/|regex:/[0-9]/|regex:/[@$!%*#?&]/|regex:/^\S+$/|confirmed',
         ]);
 
         try {
