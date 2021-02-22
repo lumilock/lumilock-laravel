@@ -245,8 +245,6 @@ class UserController extends Controller
         }
     }
 
-    
-
     /**
      * Update info of an user.
      * ! warning this function is only accessible by a super admin
@@ -294,5 +292,37 @@ class UserController extends Controller
             ],
             200
         );
+    }
+    /**
+     * Delete an user.
+     * ! warning this function is only accessible by a super admin
+     *
+     * @return Response
+     */
+    public function deleteUser($userId)
+    {
+        try {
+            $count_token = Token::where('user_id', $userId)->delete();
+            $count = User::findOrFail($userId)->delete();
+            return response()->json(
+                [
+                    'data' => 'Number of users deleted : ' . $count . ' Number of token deleted : ' . $count_token,
+                    'status' => 'SUCCESS',
+                    'message' => 'user ' . $userId . ' has been correctly deleted!'
+                ],
+                201
+            );
+            
+        } catch (\Exception $e) {
+
+            return response()->json(
+                [
+                    'data' => null,
+                    'status' => 'NOT_FOUND',
+                    'message' => 'user not found!'
+                ],
+                404
+            );
+        }
     }
 }

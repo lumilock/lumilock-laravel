@@ -37,9 +37,7 @@ $this->app->router->group(
             $router->get('users/{id:[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}}', 'UserController@singleUser');
             $router->post('users', 'AuthController@register');
             $router->put('users/{userId:[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}}', 'UserController@updateUser');
-            $router->delete('users/{id:[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}}', function () {
-                return 'Not implemented : delete /api/auth/users/{id} = delete a specific user.';
-            });
+            $router->delete('users/{userId:[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}}', 'UserController@deleteUser');
             $router->get('users/{id:[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}}/rights', function () {
                 return 'Not implemented : get /api/auth/users/{id}/rights = get all rights by services from a user.';
             });
