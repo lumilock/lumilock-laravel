@@ -46,19 +46,12 @@ $this->app->router->group(
             });
 
             // Services
-            $router->get('services', function () {
-                return 'Not implemented : get /api/auth/services = get all services.';
-            });
-            $router->post('services', 'ServiceController@singleService');
-            $router->get('services/{id:[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}}', function () {
-                return 'Not implemented : get /api/auth/services/{id} = get specific service.';
-            });
-            $router->put('services/{id:[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}}', function () {
-                return 'Not implemented : put /api/auth/services/{id} = update specific service.';
-            });
-            $router->delete('services/{id:[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}}', function () {
-                return 'Not implemented : delete /api/auth/services/{id} = delete specific service.';
-            });
+            $router->get('services', 'ServiceController@allServices');
+            $router->post('services', 'ServiceController@store');
+            $router->post('services/getByPath', 'ServiceController@getServiceByPath');
+            $router->get('services/{serviceId:[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}}', 'ServiceController@singleService');
+            $router->put('services/{serviceId:[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}}', 'ServiceController@updateService');
+            $router->delete('services/{serviceId:[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}}', 'ServiceController@deleteService');
             $router->get('services/{id:[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}}/permissions', function () {
                 return 'Not implemented : get /api/auth/services/{id}/permissions = get all permission of a service.';
             });

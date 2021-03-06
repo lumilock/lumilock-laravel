@@ -146,10 +146,9 @@ class UserController extends Controller
             );
         } catch (\Exception $e) {
 
-            dd($e);
             return response()->json(
                 [
-                    'data' => null,
+                    'data' => $e,
                     'status' => 'FAILED',
                     'message' => 'An error occured when you tried to remove tokens from a user!'
                 ],
@@ -247,7 +246,7 @@ class UserController extends Controller
 
     /**
      * Update info of an user.
-     * ! warning this function is only accessible by a super admin
+     * ! warning this function is only accessible by a super admin PERMISSIONS
      *
      * @return Response
      */
@@ -295,7 +294,7 @@ class UserController extends Controller
     }
     /**
      * Delete an user.
-     * ! warning this function is only accessible by a super admin
+     * ! warning this function is only accessible by a super admin PERMISSIONS
      *
      * @return Response
      */

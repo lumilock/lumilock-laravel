@@ -18,55 +18,34 @@ trait ConsumeExternalService
     public function performRequest($method, $requestUrl, $formParams = [], $headers = [])
     {
         try {
-            // $client = new Client([
-            //     'base_uri'  =>  $this->baseUri,
-            //     'http_errors' => false
-            // ]);
+            $client = new Client([
+                'base_uri'  =>  $this->baseUri,
+                'http_errors' => false,
+                'headers' => ['Connection' => 'close'], // Or simply add this to the request object
+                'CURLOPT_FORBID_REUSE' => true,
+                'CURLOPT_FRESH_CONNECT' => true,
+            ]);
+            if (isset($this->secret) && $this->secret !== '') {
+                $headers['Authorization_secret'] = $this->secret;
+            }
 
-            // if (isset($this->secret)) {
-            //     $headers['Authorization_secret'] = $this->secret;
-            // }
-            // $startTime = microtime(true);
-            // $promise = $client->requestAsync($method, $requestUrl, [
-            //     'form_params' => $formParams,
-            //     'headers'     => $headers,
-            //     'synchronous' => false,
-            //     'timeout' => 10
-            // ]);
-
-            // $responseHolder = null;
-            // $promise->then(function ($response) use (&$responseHolder,$startTime) {
-            //     dd('Got a response! ' . $response->getStatusCode());
-            //     dd("response: ". number_format(microtime(true) - $startTime,4));
-            //     $responseHolder = $response;
-            // });
-            // // dd("->then() function setup: ". number_format(microtime(true) - $startTime,4));
-            // $queue = \GuzzleHttp\Promise\queue();
-            // $queue->run();
-            // $queue->run();
-            // $queue->run();
-            // $queue->run();
-            // $queue->run();
-            // $queue->run();
-            // $queue->run();
-            // $queue->run();
-            // $queue->run();
-            // // dd("run run run: ". number_format(microtime(true) - $startTime,4));
-            // sleep(2);
-            // // dd("sleep: ". number_format(microtime(true) - $startTime,4));
-            // $promise->wait();
-            // // dd("wait: ". number_format(microtime(true) - $startTime,4));
-            // $results = (string)$responseHolder->getBody();
-
-            // // $this->dump($results);
-            // $duration = microtime(true) - $startTime;
-
-            // // $this->dump("Total duration: $duration");
-            // // return $response->wait()->getBody()->getContents();
-            // return 'hello';
-            // //https://github.com/guzzle/guzzle/issues/1127
+            $promise = $client->requestAsync($method, $requestUrl, [
+                'form_params' => $formParams,
+                'headers'     => $headers,
+                'synchronous' => false,
+                'timeout' => 10
+            ]);
+            $response = $promise->wait();
+            return ["content" => $response->getBody()->getContents(), "status" => $response->getStatusCode()];
         } catch (\Exception $e) {
-            dd($e);
+            return response()->json(
+                [
+                    'data' => $e,
+                    'status' => 'CONNECTION_REFUSED',
+                    'message' => $e
+                ],
+                503
+            );
         }
     }
 }

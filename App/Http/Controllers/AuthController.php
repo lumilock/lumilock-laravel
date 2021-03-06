@@ -214,7 +214,7 @@ class AuthController extends Controller
                 'message' => 'Unauthorized'
             ], 200);
         } catch (\Exception $e) {
-            dd($e);
+            dd('check error : ' . $e);
         }
     }
 }
