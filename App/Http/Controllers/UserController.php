@@ -313,7 +313,6 @@ class UserController extends Controller
                 ],
                 201
             );
-            
         } catch (\Exception $e) {
 
             return response()->json(
@@ -343,14 +342,52 @@ class UserController extends Controller
                 ],
                 201
             );
-            
         } catch (\Exception $e) {
-            dd($e);
             return response()->json(
                 [
                     'data' => null,
                     'status' => 'NOT_FOUND',
                     'message' => 'User not found!'
+                ],
+                404
+            );
+        }
+    }
+    /**
+     * Display all rights of a specific user.
+     *
+     * @param String $userId : id of the user
+     * @return Response
+     */
+    public function updateRightsUser(Request $request, $userId)
+    {
+        // validate incoming request 
+        $this->validate($request, [
+            'rights' => 'required|Array',
+            'rights.*.id' => 'required|string|distinct|regex:/^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}/|exists:permissions,id',
+            'rights.*.is_active' => 'required|boolean',
+        ]);
+        $ids = array_column($request->input('rights'), 'id');
+        $rights = array_column($request->input('rights'), 'is_active');
+        $count = 0;
+        foreach ($ids as $key => $id) {
+            $count += Right::where('permission_id', $id)->first()->update(['is_active' => $rights[$key]]);
+        }
+        try {
+            return response()->json(
+                [
+                    'data' => "Number of rights updated : $count",
+                    'status' => 'SUCCESS',
+                    'message' => 'Rights of user ' . $userId . ' has been updated',
+                ],
+                201
+            );
+        } catch (\Exception $e) {
+            return response()->json(
+                [
+                    'data' => null,
+                    'status' => 'NOT_FOUND',
+                    'message' => 'User or Right not found!'
                 ],
                 404
             );

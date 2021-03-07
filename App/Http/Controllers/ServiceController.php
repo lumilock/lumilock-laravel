@@ -264,7 +264,7 @@ class ServiceController extends Controller
     {
         try {
             $service = Service::findOrFail($serviceId);
-            $permissions = $service->permissions->pluck('name');
+            $permissions = $service->permissions->pluck('name', 'id');
             return response()->json(
                 [
                     'data' => $permissions,
