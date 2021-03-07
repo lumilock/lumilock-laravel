@@ -38,10 +38,8 @@ $this->app->router->group(
             $router->post('users', 'AuthController@register');
             $router->put('users/{userId:[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}}', 'UserController@updateUser');
             $router->delete('users/{userId:[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}}', 'UserController@deleteUser');
-            $router->get('users/{id:[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}}/rights', function () {
-                return 'Not implemented : get /api/auth/users/{id}/rights = get all rights by services from a user.';
-            });
-            $router->put('users/{id:[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}}/rights', function () {
+            $router->get('users/{userId:[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}}/rights', 'UserController@rightsUser');
+            $router->put('users/{userId:[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}}/rights', function () {
                 return 'Not implemented : put /api/auth/users/{id}/rights = update all rights by services from a user.';
             });
 
@@ -52,9 +50,7 @@ $this->app->router->group(
             $router->get('services/{serviceId:[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}}', 'ServiceController@singleService');
             $router->put('services/{serviceId:[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}}', 'ServiceController@updateService');
             $router->delete('services/{serviceId:[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}}', 'ServiceController@deleteService');
-            $router->get('services/{id:[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}}/permissions', function () {
-                return 'Not implemented : get /api/auth/services/{id}/permissions = get all permission of a service.';
-            });
+            $router->get('services/{serviceId:[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}}/permissions', 'ServiceController@servicePermissions');
 
             // Keys
             $router->get('keys', function () {

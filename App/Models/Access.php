@@ -1,9 +1,10 @@
 <?php
 
 namespace lumilock\lumilock\App\Models;
-use Illuminate\Database\Eloquent\Model;
 
-class Access extends Model
+use Illuminate\Database\Eloquent\Relations\Pivot;
+
+class Access extends Pivot
 {
     use Traits\UsesUuid;
 

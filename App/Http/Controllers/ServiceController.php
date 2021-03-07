@@ -8,6 +8,9 @@ use lumilock\lumilock\App\Http\Resources\ServiceResource;
 use lumilock\lumilock\App\Http\Resources\ServiceUriResource;
 use lumilock\lumilock\App\Models\Service;
 use GuzzleHttp\Client;
+use lumilock\lumilock\App\Models\Permission;
+use lumilock\lumilock\App\Models\Right;
+use lumilock\lumilock\App\Models\User;
 use lumilock\lumilock\App\Services\RouteService;
 use lumilock\lumilock\App\Traits\ApiResponser;
 
@@ -101,18 +104,22 @@ class ServiceController extends Controller
         ]);
 
         try {
-
-            $service_response = (Object) $this->routeService->route(
+            // We get permissions form the services config route
+            $service_response = (object) $this->routeService->route(
                 'GET',
                 $request->input('uri') . $request->input('path') . '/permissions',
                 [],
-                ['Authorization_secret' => $request->input('secret')]);
+                ['Authorization_secret' => $request->input('secret')]
+            );
             $service_content = json_decode($service_response->content);
             if (!$service_content) {
-                throw new Exception("Error Processing Request", 1);
+                throw new Exception("Error Processing Request (no permissions founded)", 1);
             }
+            // Checking if there is the app access permission else adding it
             $permissions_list = $service_content->data;
-            dd($permissions_list);
+            if (!in_array("access", $permissions_list)) {
+                array_push($permissions_list, "access");
+            }
 
             $service = new Service();
             $service->name = $request->input('name');
@@ -128,6 +135,27 @@ class ServiceController extends Controller
 
             $service->save();
 
+            $permissions_saved = [];
+            // store all permissions
+            foreach ($permissions_list as &$value) {
+                $permission = new Permission();
+                $permission->service()->associate($service);
+                $permission->name = $value;
+                $permission->save();
+
+                array_push($permissions_saved, $permission->id);
+            }
+            // https://www.php.net/manual/fr/control-structures.foreach.php
+            unset($value); // we remove reference
+
+            $users = User::all();
+            foreach ($users as &$user) {
+                $user->permissions()->attach($permissions_saved);
+                $user->save();
+            }
+            unset($user); // we remove reference
+            unset($permission); // we remove reference
+
             //return successful response
             return response()->json(
                 [
@@ -138,6 +166,7 @@ class ServiceController extends Controller
                 201
             );
         } catch (\Exception $e) {
+            dd($e);
             // return error message
             return response()->json(
                 [
@@ -225,5 +254,35 @@ class ServiceController extends Controller
             ],
             200
         );
+    }
+
+    /**
+     * Function that return all permissions of a specific service find by id
+     * @param String $serviceID : id of the service
+     */
+    public function servicePermissions($serviceId)
+    {
+        try {
+            $service = Service::findOrFail($serviceId);
+            $permissions = $service->permissions->pluck('name');
+            return response()->json(
+                [
+                    'data' => $permissions,
+                    'status' => 'SUCCESS',
+                    'message' => 'Permissions of the service ' . $serviceId . '.'
+                ],
+                200
+            );
+        } catch (\Exception $e) {
+
+            return response()->json(
+                [
+                    'data' => null,
+                    'status' => 'NOT_FOUND',
+                    'message' => 'Service not found!'
+                ],
+                404
+            );
+        }
     }
 }

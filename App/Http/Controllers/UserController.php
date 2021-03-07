@@ -4,9 +4,11 @@ namespace lumilock\lumilock\App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use lumilock\lumilock\App\Http\Resources\PermissionResource;
 use lumilock\lumilock\App\Http\Resources\TokenResource;
 use  lumilock\lumilock\App\Models\User;
 use lumilock\lumilock\App\Http\Resources\UserResource;
+use lumilock\lumilock\App\Models\Right;
 use lumilock\lumilock\App\Models\Token;
 use PhpParser\Node\Stmt\TryCatch;
 use Tymon\JWTAuth\Facades\JWTAuth;
@@ -319,6 +321,36 @@ class UserController extends Controller
                     'data' => null,
                     'status' => 'NOT_FOUND',
                     'message' => 'user not found!'
+                ],
+                404
+            );
+        }
+    }
+    /**
+     * Display all rights of a specific user.
+     *
+     * @param String $userId : id of the user
+     * @return Response
+     */
+    public function rightsUser($userId)
+    {
+        try {
+            return response()->json(
+                [
+                    'data' => PermissionResource::collection(Right::where('user_id', '=', $userId)->get()),
+                    'status' => 'SUCCESS',
+                    'message' => 'Permissions list of the user ' . $userId,
+                ],
+                201
+            );
+            
+        } catch (\Exception $e) {
+            dd($e);
+            return response()->json(
+                [
+                    'data' => null,
+                    'status' => 'NOT_FOUND',
+                    'message' => 'User not found!'
                 ],
                 404
             );
