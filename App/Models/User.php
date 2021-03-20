@@ -95,21 +95,46 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     }
 
     // all permissions for this user
-    public function permissions ()
+    public function permissions()
     {
         return $this->belongsToMany(
             'lumilock\lumilock\App\Models\Permission', // Modele cible que l'on souhaite récupérer
             'rights', // Nom de la base pivot entre le modèle source et cible
             'user_id', // id qui correspond au modèle source, dans le pivot
             'permission_id' // id qui correspond au modèle cible, dans le pivot
-            )->using('lumilock\lumilock\App\Models\Right') // chemin du modèle pivot
+        )->using('lumilock\lumilock\App\Models\Right') // chemin du modèle pivot
             ->withPivot([ // liste des élements se trouvant dans le modèle pivot autre que les ids
                 'is_active'
             ]);
     }
 
+    /**
+     * hasPermission define if a user has or not a specific permission for a specific service
+     * thansk to 2 params
+     * @param String $appPath : the unique path of a service
+     * @param String $permissionName : the name of the service permission
+     * @return Boolean : is the user authorized for this permission ? 
+     */
+    public function hasPermission($appPath, $permissionName)
+    {
+        return $this->belongsToMany(
+            'lumilock\lumilock\App\Models\Permission', // Modele cible que l'on souhaite récupérer
+            'rights', // Nom de la base pivot entre le modèle source et cible
+            'user_id', // id qui correspond au modèle source, dans le pivot
+            'permission_id' // id qui correspond au modèle cible, dans le pivot
+        )->using('lumilock\lumilock\App\Models\Right') // chemin du modèle pivot
+            ->wherePivot('is_active', True) // Get all permission that user has to true
+            ->where('name', '=', $permissionName) // filter by permissions name, get only permissions which have the name $permissionName from params
+            ->with('service') // get the service like to this or these permissions thanks to the permission Model function (service)
+            ->whereHas('service', function ($query) use ($appPath) { // filter by service path
+                $query->where('path', '=', $appPath); // get the only one which have the service path $appPath from params
+            })
+            ->get()
+            ->count() > 0;
+    }
+
     // all tokens of the currante user
-    public function tokens ()
+    public function tokens()
     {
         return $this->hasMany('lumilock\lumilock\App\Models\Token', 'user_id');
     }

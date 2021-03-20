@@ -66,17 +66,14 @@ $this->app->router->group(
 
             // Matches "/api/install
             $router->get('install', 'InstallController@installTest');
-
-
-            $notFoundController = function () {
-                return 'Not Found';
-            };
-
-            $router->get('/{route:.*}/', $notFoundController);
-            $router->post('/{route:.*}/', $notFoundController);
-            $router->put('/{route:.*}/', $notFoundController);
-            $router->patch('/{route:.*}/', $notFoundController);
-            $router->delete('/{route:.*}/', $notFoundController);
         });
+        $notFoundController = function () {
+            return 'Not Found';
+        };
+        $router->get('/{route:.*}/', $notFoundController);
+        $router->post('/{route:.*}/', $notFoundController);
+        $router->put('/{route:.*}/', $notFoundController);
+        $router->patch('/{route:.*}/', $notFoundController);
+        $router->delete('/{route:.*}/', $notFoundController);
     }
 );
