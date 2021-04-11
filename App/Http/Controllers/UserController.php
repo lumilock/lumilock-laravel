@@ -57,7 +57,7 @@ class UserController extends Controller
         $this->validate($request->merge($inputs), [
             'first_name' => 'required|regex:/^[A-Za-zÀ-ÿ\s-]+$/|max:50',
             'last_name' => 'required|regex:/^[A-Za-zÀ-ÿ\s-]+$/|max:50',
-            'email' => 'nullable|string|email|max:191|unique:users',
+            'email' => 'nullable|string|email|max:191|unique:users,email,'.Auth::id(), // unique email except for the auth id because it's
             'new_password' => 'string|min:6|regex:/[a-z]/|regex:/[A-Z]/|regex:/[0-9]/|regex:/[@$!%*#?&]/|regex:/^\S+$/|confirmed|different:password',
             'password' => 'required_with:new_password|string',
         ]);
