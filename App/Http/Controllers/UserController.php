@@ -131,7 +131,7 @@ class UserController extends Controller
     {
         try {
             // we get all tokens of the current user
-            $tokens = Token::where('user_id', '=', Auth::id());
+            $tokens = Token::where('user_id', '=', Auth::id())->get();
             // invalidate all tokens
             foreach ($tokens as $token_info) {
                 JWTAuth::manager()->invalidate(new \Tymon\JWTAuth\Token($token_info->token), $forceForever = false);
@@ -171,15 +171,24 @@ class UserController extends Controller
      * Delete one specific token from the current user.
      *
      */
-    public function profileDeleteToken($tokenId)
+    public function profileDeleteToken(Request $request, $tokenId)
     {
         try {
             // we select the token but verified that is a token of the current Auth
-            $count = Token::where('id', $tokenId)->where('id', $tokenId)->where('user_id', Auth::id())->firstOrFail()->delete();
+            $token = Token::where('id', $tokenId)->where('user_id', Auth::id())->firstOrFail();
+            $authToken = str_replace("Bearer ", "", $request->header('Authorization'));
+            $count = $token->delete();
+            $isAuthToken = $authToken == $token->token;
+            if ($token) {
+                JWTAuth::manager()->invalidate(new \Tymon\JWTAuth\Token($token->token), false);
+            }
 
             return response()->json(
                 [
-                    'data' => $count,
+                    'data' => [
+                        'deleted' => $count,
+                        'is_auth_token' => $isAuthToken,
+                    ],
                     'status' => 'SUCCESS',
                     'message' => 'The token ' . $tokenId . ' has been correctly removed.'
                 ],

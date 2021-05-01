@@ -126,10 +126,11 @@ class AuthController extends Controller
             $token_info = $this->respondWithToken($token)->original;
 
             // We calculate the token expiration date from the $token_info->expires_in value
-            $time = Carbon::now(); // Date time now
-            $time->add(new DateInterval('PT' . $token_info['expires_in'] . 'S')); // We add the duration that left to our token
-            $stamp = $time->format('Y-m-d H:i'); // Format conversion
+            // $time = Carbon::now(); // Date time now
+            // $time->add(new DateInterval('PT' . $token_info['expires_in'] . 'S')); // We add the duration that left to our token
+            // $stamp = $time->format('Y-m-d H:i'); // Format conversion
 
+            $stamp = Carbon::now()->add(new DateInterval('PT' . $token_info['expires_in'] . 'S'));
             // we remove all expires tokens
             Token::where('expires_at', '<=', Carbon::now())->delete();
 
@@ -139,6 +140,7 @@ class AuthController extends Controller
             $tokeModel->expires_at = $stamp;
             $tokeModel->token = $token_info['token'];
             $tokeModel->save();
+
 
             // response to the user by giving him token_info and user data 
             return response()->json(
