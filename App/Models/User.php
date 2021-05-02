@@ -136,7 +136,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     // all tokens of the currante user
     public function tokens()
     {
-        return $this->hasMany('lumilock\lumilock\App\Models\Token', 'user_id');
+        return $this->hasMany('lumilock\lumilock\App\Models\Token', 'user_id')->orderBy('created_at', 'desc');
     }
 
     /**

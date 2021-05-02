@@ -20,7 +20,7 @@ class TokenResource extends JsonResource
             'user_id' => $this->user_id,
             'expires_at' => Carbon::parse($this->expires_at),
             'token' => substr($this->token, 0, 6) . '******' . substr($this->token, -6),
-            // 'token2' => $this->token,
+            'is_auth_token' => $this->is_auth_token,
             'updated_at' => $this->updated_at,
             'created_at' => $this->created_at
         ];

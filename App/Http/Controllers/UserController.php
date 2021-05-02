@@ -109,12 +109,22 @@ class UserController extends Controller
      *
      * @return Response
      */
-    public function profileTokens()
+    public function profileTokens(Request $request)
     {
+        // The current Auth token
+        $authToken = str_replace("Bearer ", "", $request->header('Authorization'));
         // , 'client ip' => $_SERVER['REMOTE_ADDR'], 'host name' => gethostname(), 'browser' => $_SERVER['HTTP_USER_AGENT']
         return response()->json(
             [
-                'data' => TokenResource::collection(Auth::user()->tokens),
+                'data' => TokenResource::collection(
+                    Auth::user()
+                    ->tokens
+                    // map is to add a new keys to indicate if the token is the current auth token
+                    ->map(function($data) use ($authToken) {
+                        $data->is_auth_token = $authToken === $data->token;
+                        return $data;
+                    })
+                ),
                 'status' => 'SUCCESS',
                 'message' => 'Data of the current user.'
             ],
@@ -131,12 +141,13 @@ class UserController extends Controller
     {
         try {
             // we get all tokens of the current user
-            $tokens = Token::where('user_id', '=', Auth::id())->get();
+            $tokens = Token::where('user_id', Auth::id());
+
             // invalidate all tokens
-            foreach ($tokens as $token_info) {
-                JWTAuth::manager()->invalidate(new \Tymon\JWTAuth\Token($token_info->token), $forceForever = false);
-            }
             // clean token table in the database
+            foreach ($tokens as $token_info) {
+                JWTAuth::manager()->invalidate(new \Tymon\JWTAuth\Token($token_info->token), false);
+            }
             $count = $tokens->delete();
             return response()->json(
                 [
