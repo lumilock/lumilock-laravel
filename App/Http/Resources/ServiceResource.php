@@ -20,12 +20,8 @@ class ServiceResource extends JsonResource
             'uri' => $this->uri,
             'secret' => $this->secret,
             'path' => $this->path,
-            'picture_512' => $this->picture_512,
-            'picture_256' => $this->picture_256,
-            'picture_128' => $this->picture_128,
-            'picture_64' => $this->picture_64,
-            'picture_32' => $this->picture_32,
-            'picture_16' => $this->picture_16,
+            'picture' => $this->picture,
+            'address' => $this->address,
             'created_at' => $this->created_at
         ];
     }

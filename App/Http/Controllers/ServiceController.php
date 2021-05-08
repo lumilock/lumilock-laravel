@@ -7,9 +7,7 @@ use Illuminate\Http\Request;
 use lumilock\lumilock\App\Http\Resources\ServiceResource;
 use lumilock\lumilock\App\Http\Resources\ServiceUriResource;
 use lumilock\lumilock\App\Models\Service;
-use GuzzleHttp\Client;
 use lumilock\lumilock\App\Models\Permission;
-use lumilock\lumilock\App\Models\Right;
 use lumilock\lumilock\App\Models\User;
 use lumilock\lumilock\App\Services\RouteService;
 use lumilock\lumilock\App\Traits\ApiResponser;
@@ -27,6 +25,7 @@ class ServiceController extends Controller
     public function __construct(RouteService $routeService)
     {
         $this->routeService = $routeService;
+        $this->middleware('auth');
     }
 
 
@@ -39,7 +38,7 @@ class ServiceController extends Controller
     {
         return response()->json(
             [
-                'data' =>  ServiceResource::collection(Service::all()),
+                'data' =>  ServiceResource::collection(Service::has('access')->get()),
                 'status' => 'SUCCESS',
                 'message' => 'List of all services.'
             ],
@@ -95,12 +94,8 @@ class ServiceController extends Controller
             'uri' => 'required|max:190|string|unique:services',
             'secret' => 'required|max:100|string',
             'path' => 'required|max:190|string|unique:services',
-            'picture_512' => 'required|max:255|string',
-            'picture_256' => 'required|max:255|string',
-            'picture_128' => 'required|max:255|string',
-            'picture_64' => 'required|max:255|string',
-            'picture_32' => 'required|max:255|string',
-            'picture_16' => 'required|max:255|string',
+            'address' => 'required|max:190|string|unique:services',
+            'picture' => 'required|max:255|string',
         ]);
 
         try {
@@ -126,12 +121,8 @@ class ServiceController extends Controller
             $service->uri = $request->input('uri');
             $service->secret = $request->input('secret');
             $service->path = $request->input('path');
-            $service->picture_512 = $request->input('picture_512');
-            $service->picture_256 = $request->input('picture_256');
-            $service->picture_128 = $request->input('picture_128');
-            $service->picture_64 = $request->input('picture_64');
-            $service->picture_32 = $request->input('picture_32');
-            $service->picture_16 = $request->input('picture_16');
+            $service->address = $request->input('address');
+            $service->picture = $request->input('picture');
 
             $service->save();
 
@@ -227,12 +218,8 @@ class ServiceController extends Controller
             'uri' => "max:190|string|unique:services,uri,{$serviceId}",
             'secret' => 'max:100|string',
             'path' => "max:190|string|unique:services,path,{$serviceId}",
-            'picture_512' => 'max:255|string',
-            'picture_256' => 'max:255|string',
-            'picture_128' => 'max:255|string',
-            'picture_64' => 'max:255|string',
-            'picture_32' => 'max:255|string',
-            'picture_16' => 'max:255|string',
+            'address' => "max:190|string|unique:services,address,{$serviceId}",
+            'picture' => 'max:255|string',
         ]);
 
         // get service we want to update

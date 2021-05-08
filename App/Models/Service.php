@@ -14,17 +14,19 @@ class Service extends Model
         'uri',
         'secret',
         'path',
-        'picture_512',
-        'picture_256',
-        'picture_128',
-        'picture_64',
-        'picture_32',
-        'picture_16'
+        'picture',
+        'address'
     ];
 
     // all permissions of the currante service
     public function permissions ()
     {
         return $this->hasMany('lumilock\lumilock\App\Models\Permission', 'service_id');
+    }
+
+    // all the services to which the user has access
+    public function access ()
+    {
+        return $this->permissions()->where('name', '=', 'access')->has('authorized');
     }
 }
