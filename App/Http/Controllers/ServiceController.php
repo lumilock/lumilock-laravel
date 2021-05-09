@@ -272,4 +272,32 @@ class ServiceController extends Controller
             );
         }
     }
+
+    /**
+     * Display the total number of services.
+     *
+     * @return Response
+     */
+    public function serviceNumber()
+    {
+        try {
+            return response()->json(
+                [
+                    'data' => Service::count(),
+                    'status' => 'SUCCESS',
+                    'message' => 'Total number of services.',
+                ],
+                201
+            );
+        } catch (\Exception $e) {
+            return response()->json(
+                [
+                    'data' => null,
+                    'status' => 'SERVER_ERROR',
+                    'message' => 'Impossible to count the number of services'
+                ],
+                500
+            );
+        }
+    }
 }

@@ -413,4 +413,32 @@ class UserController extends Controller
             );
         }
     }
+    
+    /**
+     * Display the total number of users.
+     *
+     * @return Response
+     */
+    public function userNumber()
+    {
+        try {
+            return response()->json(
+                [
+                    'data' => User::count(),
+                    'status' => 'SUCCESS',
+                    'message' => 'Total number of users.',
+                ],
+                201
+            );
+        } catch (\Exception $e) {
+            return response()->json(
+                [
+                    'data' => null,
+                    'status' => 'SERVER_ERROR',
+                    'message' => 'Impossible to count the number of users'
+                ],
+                500
+            );
+        }
+    }
 }
