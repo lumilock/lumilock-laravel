@@ -65,9 +65,9 @@ class AuthController extends Controller
             $img = imagecreate($img_size, $img_size);
 
             // generate random color for background
-            $red = mt_rand(50, 150);
-            $green = mt_rand(50, 150);
-            $blue = mt_rand(50, 150);
+            $red = mt_rand(50, 180);
+            $green = mt_rand(50, 180);
+            $blue = mt_rand(50, 180);
             imagecolorallocate($img, $red, $green, $blue);
             $font_color = imagecolorallocate($img, 255, 255, 255);
             $font = __DIR__.'/../../../Public/Roboto-Regular.ttf';
