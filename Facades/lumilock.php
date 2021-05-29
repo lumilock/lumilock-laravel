@@ -77,4 +77,40 @@ class lumilock extends Facade
         $resultFinal = trim($resultFinal, '.');
         return $resultFinal;
     }
+
+    /**
+     * Generate initials from a name
+     *
+     * @param string $name
+     * @return string
+     */
+    public static function generate(string $name) : string
+    {
+        $words = preg_split('#[\s-]#', $name);
+      
+        if (count($words) >= 2) {
+          $result = '';
+          foreach ($words as $word) {
+            $result .= strtoupper(substr($word, 0, 1));
+          }
+            return $result;
+        }
+        return lumilock::makeInitialsFromSingleWord($name);
+    }
+
+    /**
+     * Make initials from a word with no spaces
+     *
+     * @param string $name
+     * @return string
+     */
+    protected static function makeInitialsFromSingleWord(string $name) : string
+    {
+        preg_match_all('#([A-Z]+)#', $name, $capitals);
+        if (count($capitals[1]) >= 2) {
+            return substr(implode('', $capitals[1]), 0, 2);
+        }
+        return strtoupper(substr($name, 0, 2));
+    }
+
 }

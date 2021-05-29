@@ -6,11 +6,11 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use lumilock\lumilock\App\Http\Resources\PermissionResource;
 use lumilock\lumilock\App\Http\Resources\TokenResource;
+use lumilock\lumilock\App\Http\Resources\UserLigthResource;
 use  lumilock\lumilock\App\Models\User;
 use lumilock\lumilock\App\Http\Resources\UserResource;
 use lumilock\lumilock\App\Models\Right;
 use lumilock\lumilock\App\Models\Token;
-use PhpParser\Node\Stmt\TryCatch;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
 class UserController extends Controller
@@ -227,7 +227,7 @@ class UserController extends Controller
     {
         return response()->json(
             [
-                'data' =>  UserResource::collection(User::all()),
+                'data' =>  UserLigthResource::collection(User::all()),
                 'status' => 'SUCCESS',
                 'message' => 'List of all users.'
             ],

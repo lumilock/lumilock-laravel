@@ -68,6 +68,7 @@ $app->routeMiddleware([
  // Add these lines
 $app->register(Tymon\JWTAuth\Providers\LumenServiceProvider::class);
 $app->register(lumilock\lumilock\Providers\LumilockServiceProvider::class);
+$app->register(Intervention\Image\ImageServiceProvider::class);
 ```
 
 Add Authentiacate Middleware in order to protect your auth package and add CORS Middleware to `bootstrap/app.php`.
@@ -79,6 +80,8 @@ Add Authentiacate Middleware in order to protect your auth package and add CORS 
       \lumilock\lumilock\App\Http\Middleware\CorsMiddleware::class
   ]);
 ```
+Do not forget to create a link between your `public` folder and your `storage/app` folder.
+Watch this link if you need help : https://stackoverflow.com/questions/47772360/how-to-create-symlink-for-storage-public-folder-for-lumen
 
 Finally add a secret key to the file `.env`  
 ```.env

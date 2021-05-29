@@ -6,12 +6,16 @@ use Carbon\Carbon;
 use DateInterval;
 use lumilock\lumilock\App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Intervention\Image\Facades\Image;
 
 //import auth facades
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use lumilock\lumilock\App\Http\Resources\UserResource;
 use lumilock\lumilock\App\Models\Token;
 use lumilock\lumilock\App\Models\User;
+use lumilock\lumilock\Facades\lumilock as FacadesLumilock;
+use lumilock\lumilock\Lumilock;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
 class AuthController extends Controller
@@ -44,16 +48,49 @@ class AuthController extends Controller
         ]);
 
         try {
-
+            // Save user in DB
             $user = new User();
             $user->login = $request->input('first_name') . "\$split\$" . $request->input('last_name');
             $user->first_name = $request->input('first_name');
             $user->last_name = $request->input('last_name');
             $user->email = $request->input('email');
+            $user->picture = time() . '.' . uniqid() . '.png'; // generate a fileName
             $plainPassword = $request->input('password');
             $user->password = app('hash')->make($plainPassword);
 
             $user->save();
+
+            // Generate User profile picture
+            $img_size = 512;
+            $img = imagecreate($img_size, $img_size);
+
+            // generate random color for background
+            $red = mt_rand(50, 150);
+            $green = mt_rand(50, 150);
+            $blue = mt_rand(50, 150);
+            imagecolorallocate($img, $red, $green, $blue);
+            $font_color = imagecolorallocate($img, 255, 255, 255);
+            $font = __DIR__.'/../../../Public/Roboto-Regular.ttf';
+
+            // Generate initials text
+            $initials = FacadesLumilock::generate("$user->first_name $user->last_name");
+            $font_size  = 128;
+            $f_width = 110;
+            $f_heigth = -124;
+            $font_width = $f_width * strlen($initials);
+            $font_height = $f_heigth;
+
+            imagettftext($img, $font_size, 0, ($img_size/2)-($font_width/2), ($img_size/2)-($font_height/2), $font_color , $font, $initials);
+
+            // Convert image to store it
+            $image = Image::make($img);
+            // Set image name
+            $fileName   = $user->picture;
+            $image->stream(); // <-- Key point
+            // Store image
+            Storage::disk('local')->put("Users/$user->id/profile/" . $fileName, $image, 'public');
+            // Remove image id generation
+            imagedestroy($img);
 
             //return successful response
             return response()->json(
@@ -152,7 +189,7 @@ class AuthController extends Controller
                 201
             );
         } catch (\Exception $e) {
-            dd("Login error : ". $e);
+            dd("Login error : " . $e);
         }
     }
 
