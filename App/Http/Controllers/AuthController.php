@@ -12,6 +12,7 @@ use Intervention\Image\Facades\Image;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use lumilock\lumilock\App\Http\Resources\UserResource;
+use lumilock\lumilock\App\Models\Permission;
 use lumilock\lumilock\App\Models\Token;
 use lumilock\lumilock\App\Models\User;
 use lumilock\lumilock\Facades\lumilock as FacadesLumilock;
@@ -48,6 +49,8 @@ class AuthController extends Controller
         ]);
 
         try {
+            // Get all permissions ids
+            $permissions_array = Permission::all()->pluck('id');
             // Save user in DB
             $user = new User();
             $user->login = $request->input('first_name') . "\$split\$" . $request->input('last_name');
@@ -60,6 +63,9 @@ class AuthController extends Controller
 
             $user->save();
 
+            // saved permissions of the new user
+            $user->permissions()->attach($permissions_array);
+
             // Generate User profile picture
             $img_size = 512;
             $img = imagecreate($img_size, $img_size);
@@ -70,7 +76,7 @@ class AuthController extends Controller
             $blue = mt_rand(50, 180);
             imagecolorallocate($img, $red, $green, $blue);
             $font_color = imagecolorallocate($img, 255, 255, 255);
-            $font = __DIR__.'/../../../Public/Roboto-Regular.ttf';
+            $font = __DIR__ . '/../../../Public/Roboto-Regular.ttf';
 
             // Generate initials text
             $initials = FacadesLumilock::generate("$user->first_name $user->last_name");
@@ -80,7 +86,7 @@ class AuthController extends Controller
             $font_width = $f_width * strlen($initials);
             $font_height = $f_heigth;
 
-            imagettftext($img, $font_size, 0, ($img_size/2)-($font_width/2), ($img_size/2)-($font_height/2), $font_color , $font, $initials);
+            imagettftext($img, $font_size, 0, ($img_size / 2) - ($font_width / 2), ($img_size / 2) - ($font_height / 2), $font_color, $font, $initials);
 
             // Convert image to store it
             $image = Image::make($img);

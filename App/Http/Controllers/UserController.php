@@ -9,7 +9,10 @@ use lumilock\lumilock\App\Http\Resources\TokenResource;
 use lumilock\lumilock\App\Http\Resources\UserLigthResource;
 use  lumilock\lumilock\App\Models\User;
 use lumilock\lumilock\App\Http\Resources\UserResource;
+use lumilock\lumilock\App\Http\Resources\UsersPermissionsByServiceResource;
+use lumilock\lumilock\App\Models\Permission;
 use lumilock\lumilock\App\Models\Right;
+use lumilock\lumilock\App\Models\Service;
 use lumilock\lumilock\App\Models\Token;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
@@ -353,10 +356,16 @@ class UserController extends Controller
      */
     public function rightsUser($userId)
     {
+        $userPermissionsByServices = Service::with(['permissions:id,service_id,name', 'permissions.users' => function ($queryUsers) use($userId) {
+            $queryUsers->where('users.id', $userId)->select('is_active')->get();
+        }])
+        ->select(['id', 'picture', 'name'])
+        ->get();
+        
         try {
             return response()->json(
                 [
-                    'data' => PermissionResource::collection(Right::where('user_id', '=', $userId)->get()),
+                    'data' => UsersPermissionsByServiceResource::collection($userPermissionsByServices),
                     'status' => 'SUCCESS',
                     'message' => 'Permissions list of the user ' . $userId,
                 ],
