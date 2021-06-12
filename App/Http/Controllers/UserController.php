@@ -361,7 +361,6 @@ class UserController extends Controller
         }])
         ->select(['id', 'picture', 'name'])
         ->get();
-        
         try {
             return response()->json(
                 [
@@ -400,7 +399,7 @@ class UserController extends Controller
         $rights = array_column($request->input('rights'), 'is_active');
         $count = 0;
         foreach ($ids as $key => $id) {
-            $count += Right::where('permission_id', $id)->first()->update(['is_active' => $rights[$key]]);
+            $count += Right::where('permission_id', $id)->where('user_id', $userId)->first()->update(['is_active' => $rights[$key]]);
         }
         try {
             return response()->json(
