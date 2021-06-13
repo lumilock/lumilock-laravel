@@ -30,7 +30,7 @@ class ServiceController extends Controller
 
 
     /**
-     * Get all Services. // TODO PERMISSIONS
+     * Get all Services, except the 'Lumilock Auth Settings' which represent auth rights. // TODO PERMISSIONS
      *
      * @return Response
      */
@@ -38,7 +38,7 @@ class ServiceController extends Controller
     {
         return response()->json(
             [
-                'data' =>  ServiceResource::collection(Service::has('access')->get()),
+                'data' =>  ServiceResource::collection(Service::has('access')->where('uri', '!=', 'Lumilock Auth Settings')->get()),
                 'status' => 'SUCCESS',
                 'message' => 'List of all services.'
             ],

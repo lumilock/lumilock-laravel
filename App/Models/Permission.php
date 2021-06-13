@@ -1,12 +1,15 @@
 <?php
 
 namespace lumilock\lumilock\App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 
 class Permission extends Model
 {
     use Traits\UsesUuid;
+    use HasFactory;
 
     protected $table = 'permissions';
 
@@ -61,5 +64,15 @@ class Permission extends Model
             ->withPivot([ // liste des élements se trouvant dans le modèle pivot autre que les ids
                 'is_active'
             ]);
+    }
+
+    /**
+     * Create a new factory instance for the model.
+     *
+     * @return \Illuminate\Database\Eloquent\Factories\Factory
+     */
+    protected static function newFactory()
+    {
+        return \lumilock\lumilock\database\factories\PermissionFactory::new();
     }
 }

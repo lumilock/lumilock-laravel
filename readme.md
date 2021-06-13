@@ -113,6 +113,13 @@ vendor/bin/phpunit <path/to/lumilock/test/dir>
 
 vendor/bin/phpunit .\vendor\lumilock\lumilock\tests\
 ```
+
+## 🌱 Seeds
+In order to generate data with seeds use this command line :
+```shell
+php artisan db:seed --class=lumilock\lumilock\database\seeds\DatabaseSeeder
+```
+
 ## 🏗️ Create a package
 https://blog.cloudoki.com/creating-a-lumen-package/
 

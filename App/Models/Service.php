@@ -1,11 +1,14 @@
 <?php
 
 namespace lumilock\lumilock\App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Service extends Model
 {
     use Traits\UsesUuid;
+    use HasFactory;
 
     protected $table = 'services';
 
@@ -28,5 +31,16 @@ class Service extends Model
     public function access ()
     {
         return $this->permissions()->where('name', '=', 'access')->has('authorized');
+    }
+
+    
+    /**
+     * Create a new factory instance for the model.
+     *
+     * @return \Illuminate\Database\Eloquent\Factories\Factory
+     */
+    protected static function newFactory()
+    {
+        return \lumilock\lumilock\database\factories\ServiceFactory::new();
     }
 }
