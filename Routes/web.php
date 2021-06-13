@@ -33,7 +33,12 @@ $this->app->router->group(
             $router->delete('profile/tokens/{tokenId:[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}}', 'UserController@profileDeleteToken');
 
             // Users
+            // $router->group(['middleware' => [
+            //     'auth',
+            //     'can:use,lumilock\lumilock\App\Models\User,"/api/auth","access"'
+            // ]], function () use ($router) {
             $router->get('users', 'UserController@allUsers');
+            // });
             $router->get('users/{id:[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}}', 'UserController@singleUser');
             $router->post('users', 'AuthController@register');
             $router->get('users/number', 'UserController@userNumber');

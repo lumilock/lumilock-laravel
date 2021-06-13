@@ -79,6 +79,10 @@ Add Authentiacate Middleware in order to protect your auth package and add CORS 
   $app->middleware([
       \lumilock\lumilock\App\Http\Middleware\CorsMiddleware::class
   ]);
+  $app->routeMiddleware([
+      'auth' => App\Http\Middleware\Authenticate::class,
+      'can' => \Illuminate\Auth\Middleware\Authorize::class,
+  ]);
 ```
 Do not forget to create a link between your `public` folder and your `storage/app` folder.
 Watch this link if you need help : https://stackoverflow.com/questions/47772360/how-to-create-symlink-for-storage-public-folder-for-lumen
@@ -118,6 +122,13 @@ vendor/bin/phpunit .\vendor\lumilock\lumilock\tests\
 In order to generate data with seeds use this command line :
 ```shell
 php artisan db:seed --class=lumilock\lumilock\database\seeds\DatabaseSeeder
+```
+
+## Config :
+```.env
+AUTH_URI=<http://your_uri_api>
+AUTH_SECRET=<your_secret>
+AUTH_ADDRESS=<http://your_uri_front>
 ```
 
 ## 🏗️ Create a package

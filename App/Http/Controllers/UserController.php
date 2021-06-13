@@ -4,13 +4,12 @@ namespace lumilock\lumilock\App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use lumilock\lumilock\App\Http\Resources\PermissionResource;
+use Illuminate\Support\Facades\Gate;
 use lumilock\lumilock\App\Http\Resources\TokenResource;
 use lumilock\lumilock\App\Http\Resources\UserLigthResource;
 use  lumilock\lumilock\App\Models\User;
 use lumilock\lumilock\App\Http\Resources\UserResource;
 use lumilock\lumilock\App\Http\Resources\UsersPermissionsByServiceResource;
-use lumilock\lumilock\App\Models\Permission;
 use lumilock\lumilock\App\Models\Right;
 use lumilock\lumilock\App\Models\Service;
 use lumilock\lumilock\App\Models\Token;
@@ -228,14 +227,25 @@ class UserController extends Controller
      */
     public function allUsers()
     {
+        if (Gate::allows('use', ['/api/auth', 'access'])) {
+            return response()->json(
+                [
+                    'data' =>  UserLigthResource::collection(User::all()),
+                    'status' => 'SUCCESS',
+                    'message' => 'List of all users.'
+                ],
+                200
+            );
+        }
         return response()->json(
             [
-                'data' =>  UserLigthResource::collection(User::all()),
-                'status' => 'SUCCESS',
-                'message' => 'List of all users.'
+                'data' => null,
+                'status' => 'Unauthorized',
+                'message' => 'You do not have permissions to access to these ressources'
             ],
-            200
-        );
+            401
+        ); 
+
     }
 
     /**

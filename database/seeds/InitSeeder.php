@@ -19,15 +19,18 @@ class InitSeeder extends Seeder
      */
     public function run()
     {
+        // get logo image
+        $data = file_get_contents(__DIR__ . '/../../Public/Logo.png');
+
         // Creating an initial services
         $service = Service::factory()
             ->create([
-                'name' => 'Lumilock Auth Settings',
-                'uri' => 'Lumilock Auth Settings',
-                'secret' => 'Lumilock Auth Settings',
-                'path' => 'Lumilock Auth Settings',
-                'address' => 'Lumilock Auth Settings',
-                'picture' => 'Lumilock Auth Settings',
+                'name' => 'Lumilock',
+                'uri' => env('AUTH_URI'),
+                'secret' => env('AUTH_SECRET'),
+                'path' => '/api/auth',
+                'address' => env('AUTH_ADDRESS'),
+                'picture' => 'data:image/png;base64,' . base64_encode($data),
             ]);
 
         // Init Permissions of this service

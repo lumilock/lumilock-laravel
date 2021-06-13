@@ -38,7 +38,7 @@ class ServiceController extends Controller
     {
         return response()->json(
             [
-                'data' =>  ServiceResource::collection(Service::has('access')->where('uri', '!=', 'Lumilock Auth Settings')->get()),
+                'data' =>  ServiceResource::collection(Service::has('access')->where('uri', '!=', env('AUTH_URI'))->get()),
                 'status' => 'SUCCESS',
                 'message' => 'List of all services.'
             ],

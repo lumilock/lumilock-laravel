@@ -2,9 +2,13 @@
 
 namespace lumilock\lumilock\Providers;
 
-use Illuminate\Support\Facades\App;
+// use Illuminate\Support\Facades\App;
+
+use Illuminate\Auth\Access\Response;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Database\Eloquent\Factory as EloquentFactory;
+use Illuminate\Support\Facades\Gate;
+use lumilock\lumilock\App\Models\User;
 
 class LumilockServiceProvider extends ServiceProvider
 {
@@ -16,6 +20,13 @@ class LumilockServiceProvider extends ServiceProvider
     */
    public function boot()
    {
+      Gate::define('use', function (User $user, string $app_path, string $permission_name, string $errorMessage = 'Not Authorized')
+      {
+          return $user->hasPermission($app_path, $permission_name)
+              ? Response::allow()
+              : Response::deny($errorMessage);
+      });
+
       $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
    }
 
@@ -26,7 +37,6 @@ class LumilockServiceProvider extends ServiceProvider
     */
    public function register()
    {
-
       // Register the service the package provides.
       // $this->app->singleton('lumilock', function ($app) {
       //    return new lumilock;
@@ -47,7 +57,7 @@ class LumilockServiceProvider extends ServiceProvider
          // overwritting it if necessary
          copy($configPath, $baseConfigPath . '/auth.php');
       }
-      
+
       $servicePath = __DIR__ . '/../config/services.php';
       $this->mergeConfigFrom($servicePath, 'services');
 
@@ -58,8 +68,7 @@ class LumilockServiceProvider extends ServiceProvider
       }
 
       // Loading custom factories
-      $this->registerEloquentFactoriesFrom(__DIR__.'/../database/factories');
-
+      $this->registerEloquentFactoriesFrom(__DIR__ . '/../database/factories');
    }
 
    /**

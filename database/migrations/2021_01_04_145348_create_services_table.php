@@ -20,7 +20,7 @@ class CreateServicesTable extends Migration
             $table->string('secret',100)->nullable(false); // exemple : 123456789
             $table->string('path',190)->unique()->nullable(false); // exemple /api/auditLaitCru
             $table->string('address',190)->unique()->nullable(false); // exemple http://localhost:3001/whatever
-            $table->string('picture',255)->default(''); // exemple : https://i.pinimg.com/originals/8f/c3/7b/8fc37b74b608a622588fbaa361485f32.png
+            $table->string('picture',2000)->default(''); // exemple : https://i.pinimg.com/originals/8f/c3/7b/8fc37b74b608a622588fbaa361485f32.png
             $table->timestamps();
         });
     }
