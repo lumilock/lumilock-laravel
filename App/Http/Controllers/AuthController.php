@@ -11,8 +11,10 @@ use Intervention\Image\Facades\Image;
 //import auth facades
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use lumilock\lumilock\App\Http\Resources\AuthPermissionsResource;
 use lumilock\lumilock\App\Http\Resources\UserResource;
 use lumilock\lumilock\App\Models\Permission;
+use lumilock\lumilock\App\Models\Service;
 use lumilock\lumilock\App\Models\Token;
 use lumilock\lumilock\App\Models\User;
 use lumilock\lumilock\Facades\lumilock as FacadesLumilock;
@@ -184,11 +186,18 @@ class AuthController extends Controller
             $tokeModel->token = $token_info['token'];
             $tokeModel->save();
 
-
+            // Retrieve Auth permissions
+            $userPermissions = Service::with(['permissions:id,service_id,name', 'permissions.users' => function ($queryUsers) use ($user) {
+                $queryUsers->where('users.id', $user->id)->select('is_active')->get();
+            }])
+                ->select(['id', 'path', 'name', 'uri'])
+                ->get();
+            $permissions = AuthPermissionsResource::collection($userPermissions);
+            
             // response to the user by giving him token_info and user data 
             return response()->json(
                 [
-                    'data' => compact('token_info', 'user'),
+                    'data' => compact('token_info', 'user', 'permissions'),
                     'status' => 'SUCCESS',
                     'message' => 'All info for the connection.'
                 ],
@@ -253,8 +262,16 @@ class AuthController extends Controller
                 'token_type' => "bearer"
             ];
 
+            // Retrieve Auth permissions
+            $userPermissions = Service::with(['permissions:id,service_id,name', 'permissions.users' => function ($queryUsers) use ($user) {
+                $queryUsers->where('users.id', $user->id)->select('is_active')->get();
+            }])
+                ->select(['id', 'path', 'name', 'uri'])
+                ->get();
+            $permissions = AuthPermissionsResource::collection($userPermissions);
+
             return response()->json([
-                'data' => compact('token_info', 'user'),
+                'data' => compact('token_info', 'user', 'permissions'),
                 'status' => 'USER_VERIFIED',
                 'message' => 'Unauthorized'
             ], 200);

@@ -33,29 +33,30 @@ $this->app->router->group(
             $router->delete('profile/tokens/{tokenId:[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}}', 'UserController@profileDeleteToken');
 
             // Users
-            // $router->group(['middleware' => [
-            //     'auth',
-            //     'can:use,lumilock\lumilock\App\Models\User,"/api/auth","access"'
-            // ]], function () use ($router) {
-            $router->get('users', 'UserController@allUsers');
-            // });
-            $router->get('users/{id:[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}}', 'UserController@singleUser');
-            $router->post('users', 'AuthController@register');
-            $router->get('users/number', 'UserController@userNumber');
-            $router->put('users/{userId:[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}}', 'UserController@updateUser');
-            $router->delete('users/{userId:[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}}', 'UserController@deleteUser');
-            $router->get('users/{userId:[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}}/rights', 'UserController@rightsUser');
-            $router->put('users/{userId:[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}}/rights', 'UserController@updateRightsUser');
+            $router->group(['middleware' => ['Lumilock-permissions:/api/auth,access', 'Lumilock-permissions:/api/auth,users']], function () use ($router) {
+
+                $router->get('users', 'UserController@allUsers');
+                $router->get('users/{id:[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}}', 'UserController@singleUser');
+                $router->post('users', 'AuthController@register');
+                $router->get('users/number', 'UserController@userNumber');
+                $router->put('users/{userId:[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}}', 'UserController@updateUser');
+                $router->delete('users/{userId:[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}}', 'UserController@deleteUser');
+                $router->get('users/{userId:[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}}/rights', 'UserController@rightsUser');
+                $router->put('users/{userId:[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}}/rights', 'UserController@updateRightsUser');
+            });
 
             // Services
             $router->get('services', 'ServiceController@allServices');
-            $router->post('services', 'ServiceController@store');
-            $router->post('services/getByPath', 'ServiceController@getServiceByPath');
-            $router->get('services/number', 'ServiceController@serviceNumber');
-            $router->get('services/{serviceId:[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}}', 'ServiceController@singleService');
-            $router->put('services/{serviceId:[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}}', 'ServiceController@updateService');
-            $router->delete('services/{serviceId:[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}}', 'ServiceController@deleteService');
-            $router->get('services/{serviceId:[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}}/permissions', 'ServiceController@servicePermissions');
+            $router->group(['middleware' => ['Lumilock-permissions:/api/auth,access', 'Lumilock-permissions:/api/auth,services']], function () use ($router) {
+
+                $router->post('services', 'ServiceController@store');
+                $router->post('services/getByPath', 'ServiceController@getServiceByPath');
+                $router->get('services/number', 'ServiceController@serviceNumber');
+                $router->get('services/{serviceId:[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}}', 'ServiceController@singleService');
+                $router->put('services/{serviceId:[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}}', 'ServiceController@updateService');
+                $router->delete('services/{serviceId:[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}}', 'ServiceController@deleteService');
+                $router->get('services/{serviceId:[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}}/permissions', 'ServiceController@servicePermissions');
+            });
 
             // Keys
             $router->get('keys', function () {

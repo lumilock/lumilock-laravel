@@ -4,7 +4,6 @@ namespace lumilock\lumilock\App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Gate;
 use lumilock\lumilock\App\Http\Resources\TokenResource;
 use lumilock\lumilock\App\Http\Resources\UserLigthResource;
 use  lumilock\lumilock\App\Models\User;
@@ -59,7 +58,7 @@ class UserController extends Controller
         $this->validate($request->merge($inputs), [
             'first_name' => 'required|regex:/^[A-Za-zÀ-ÿ\s-]+$/|max:50',
             'last_name' => 'required|regex:/^[A-Za-zÀ-ÿ\s-]+$/|max:50',
-            'email' => 'nullable|string|email|max:191|unique:users,email,'.Auth::id(), // unique email except for the auth id because it's
+            'email' => 'nullable|string|email|max:191|unique:users,email,' . Auth::id(), // unique email except for the auth id because it's
             'new_password' => 'string|min:6|regex:/[a-z]/|regex:/[A-Z]/|regex:/[0-9]/|regex:/[@$!%*#?&]/|regex:/^\S+$/|confirmed|different:password',
             'password' => 'required_with:new_password|string',
         ]);
@@ -120,12 +119,12 @@ class UserController extends Controller
             [
                 'data' => TokenResource::collection(
                     Auth::user()
-                    ->tokens
-                    // map is to add a new keys to indicate if the token is the current auth token
-                    ->map(function($data) use ($authToken) {
-                        $data->is_auth_token = $authToken === $data->token;
-                        return $data;
-                    })
+                        ->tokens
+                        // map is to add a new keys to indicate if the token is the current auth token
+                        ->map(function ($data) use ($authToken) {
+                            $data->is_auth_token = $authToken === $data->token;
+                            return $data;
+                        })
                 ),
                 'status' => 'SUCCESS',
                 'message' => 'Data of the current user.'
@@ -227,25 +226,22 @@ class UserController extends Controller
      */
     public function allUsers()
     {
-        if (Gate::allows('use', ['/api/auth', 'access'])) {
-            return response()->json(
-                [
-                    'data' =>  UserLigthResource::collection(User::all()),
-                    'status' => 'SUCCESS',
-                    'message' => 'List of all users.'
-                ],
-                200
-            );
-        }
         return response()->json(
             [
-                'data' => null,
-                'status' => 'Unauthorized',
-                'message' => 'You do not have permissions to access to these ressources'
+                'data' =>  UserLigthResource::collection(User::all()),
+                'status' => 'SUCCESS',
+                'message' => 'List of all users.'
             ],
-            401
-        ); 
-
+            200
+        );
+        // return response()->json(
+        //     [
+        //         'data' => null,
+        //         'status' => 'Unauthorized',
+        //         'message' => 'You do not have permissions to access to these ressources'
+        //     ],
+        //     401
+        // );
     }
 
     /**
@@ -366,11 +362,11 @@ class UserController extends Controller
      */
     public function rightsUser($userId)
     {
-        $userPermissionsByServices = Service::with(['permissions:id,service_id,name', 'permissions.users' => function ($queryUsers) use($userId) {
+        $userPermissionsByServices = Service::with(['permissions:id,service_id,name', 'permissions.users' => function ($queryUsers) use ($userId) {
             $queryUsers->where('users.id', $userId)->select('is_active')->get();
         }])
-        ->select(['id', 'picture', 'name'])
-        ->get();
+            ->select(['id', 'picture', 'name'])
+            ->get();
         try {
             return response()->json(
                 [
@@ -431,7 +427,7 @@ class UserController extends Controller
             );
         }
     }
-    
+
     /**
      * Display the total number of users.
      *

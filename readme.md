@@ -81,7 +81,7 @@ Add Authentiacate Middleware in order to protect your auth package and add CORS 
   ]);
   $app->routeMiddleware([
       'auth' => App\Http\Middleware\Authenticate::class,
-      'can' => \Illuminate\Auth\Middleware\Authorize::class,
+      'Lumilock-permissions' => \lumilock\lumilock\App\Http\Middleware\LumilockPermissionsMiddleware::class,
   ]);
 ```
 Do not forget to create a link between your `public` folder and your `storage/app` folder.
