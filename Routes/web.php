@@ -18,6 +18,9 @@ $this->app->router->group(
     function ($router) {
         $router->group(['prefix' => 'auth'], function () use ($router) {
             // ROUTE : api/auth/...
+            $router->get('ping', function () {
+                return 'lumilock auth : >>> pong!';
+            });
 
             // Auth functions
             $router->post('login', 'AuthController@login');

@@ -121,7 +121,7 @@ vendor/bin/phpunit .\vendor\lumilock\lumilock\tests\
 ## 🌱 Seeds
 In order to generate data with seeds use this command line :
 ```shell
-php artisan db:seed --class=lumilock\lumilock\database\seeds\DatabaseSeeder
+php artisan db:seed --class="lumilock\lumilock\database\seeds\DatabaseSeeder"
 ```
 
 ## Config :
