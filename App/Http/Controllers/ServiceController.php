@@ -58,6 +58,7 @@ class ServiceController extends Controller
             'path' => 'required',
         ]);
 
+
         try {
 
             $service = Service::where('path', '=', $request->input('path'))->firstOrFail();

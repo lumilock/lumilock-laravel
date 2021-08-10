@@ -50,10 +50,10 @@ $this->app->router->group(
 
             // Services
             $router->get('services', 'ServiceController@allServices');
+            $router->post('services/getByPath', 'ServiceController@getServiceByPath');
             $router->group(['middleware' => ['Lumilock-permissions:/api/auth,access', 'Lumilock-permissions:/api/auth,services']], function () use ($router) {
 
                 $router->post('services', 'ServiceController@store');
-                $router->post('services/getByPath', 'ServiceController@getServiceByPath');
                 $router->get('services/number', 'ServiceController@serviceNumber');
                 $router->get('services/{serviceId:[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}}', 'ServiceController@singleService');
                 $router->put('services/{serviceId:[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}}', 'ServiceController@updateService');
